@@ -16,6 +16,7 @@ app = FastAPI(
     openapi_url="/openapi.json" if '--dev' in argv else None
 )
 
+api = APIRouter(prefix="/api")
 api_versions = [
     "v1",
 ]
@@ -23,4 +24,6 @@ api_versions = [
 for v in [__import__(x) for x in api_versions]:
     router: APIRouter = getattr(v, "init")()
     if not router.deprecated:
-        app.include_router(router=router)
+        api.include_router(router=router)
+
+app.include_router(router=api)
