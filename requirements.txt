@@ -32,6 +32,10 @@ pyjwt==2.4.0
     # via -r requirements.in
 python-dotenv==0.20.0
     # via -r requirements.in
+python-multipart==0.0.5
+    # via -r requirements.in
+six==1.16.0
+    # via python-multipart
 sniffio==1.2.0
     # via anyio
 sqlalchemy==1.4.39

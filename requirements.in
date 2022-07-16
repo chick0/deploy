@@ -1,6 +1,7 @@
 fastapi
 uvicorn
 pyjwt
+python-multipart
 python-dotenv
 SQLAlchemy
 alembic
