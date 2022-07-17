@@ -7,5 +7,5 @@ algorithms = ['HS256']
 
 # registered claim #
 iss = environ['ISS']
-iat = lambda: datetime.now()
-exp = lambda: datetime.now() + timedelta(hours=3)
+iat = lambda: datetime.now().timestamp()
+exp = lambda: (datetime.now() + timedelta(hours=3)).timestamp()
