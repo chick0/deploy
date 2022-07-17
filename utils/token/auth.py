@@ -4,9 +4,9 @@ from jwt import decode
 from fastapi import HTTPException
 from pydantic import BaseModel
 
-from . import key
-from . import algorithms
-from . import iss
+from utils.token import key
+from utils.token import algorithms
+from utils.token import iss
 
 
 class AuthPayload(BaseModel):
