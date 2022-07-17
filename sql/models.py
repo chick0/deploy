@@ -2,6 +2,7 @@ from sqlalchemy import Column
 from sqlalchemy import String
 from sqlalchemy import DateTime
 from sqlalchemy import SmallInteger
+from sqlalchemy import Boolean
 from sqlalchemy import ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -93,3 +94,42 @@ class Project(Base):
 
     def __repr__(self):
         return f"<Project uuid={self.uuid!r} owner={self.owner!r}, title={self.title!r}>"
+
+
+class DeployToken(Base):
+    __tablename__ = "deploy_token"
+
+    uuid = Column(
+        String(36),
+        unique=True,
+        primary_key=True,
+        nullable=False
+    )
+
+    project = Column(
+        String(36),
+        ForeignKey("project.uuid")
+    )
+
+    create_by = Column(
+        String(36),
+        ForeignKey("user.uuid")
+    )
+
+    read = Column(
+        Boolean,
+        default=False
+    )
+
+    write = Column(
+        Boolean,
+        default=False
+    )
+
+    delete = Column(
+        Boolean,
+        default=False
+    )
+
+    def __repr__(self):
+        return f"<DeployToken uuid={self.uuid!r} create_by={self.create_by!r}>"

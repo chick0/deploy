@@ -13,7 +13,6 @@ class DeployPermission(BaseModel):
     read: bool
     write: bool
     delete: bool
-    deploy: bool
 
 
 class DeployPayload(BaseModel):
