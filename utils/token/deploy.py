@@ -15,6 +15,7 @@ class DeployPermission(BaseModel):
 
 
 class DeployPayload(BaseModel):
+    uuid: str
     user: str
     project: str
     permission: DeployPermission
@@ -22,7 +23,7 @@ class DeployPayload(BaseModel):
     iss: str = iss
 
 
-def create_token(user: str, project: str, permission: list) -> str:
+def parse_permission(permission: list) -> DeployPermission:
     options = {}
     [options.update({x: False}) for x in DeployPermission.schema()['properties']]
 
@@ -32,11 +33,18 @@ def create_token(user: str, project: str, permission: list) -> str:
         else:
             raise TypeError(f"'{x}' it not allowed permission.")
 
+    return DeployPermission(**options)
+
+
+def create_token(uuid: str, user: str, project: str, permission: list) -> str:
     return encode(
         payload=DeployPayload(
+            uuid=uuid,
             user=user,
             project=project,
-            permission=DeployPermission(**options)
+            permission=parse_permission(
+                permission=permission
+            )
         ).dict(),
         key="deploy:" + key,
         algorithm=algorithms[0]

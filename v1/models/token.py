@@ -11,7 +11,7 @@ class TokenResponse(BaseModel):
 
 
 class TokenDelete(BaseModel):
-    token_id: str
+    token: str
 
 
 class TokenDeleteResult(BaseModel):
