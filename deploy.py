@@ -1,3 +1,8 @@
+from os import mkdir
+from os.path import join
+from os.path import exists
+from os.path import dirname
+from os.path import abspath
 from os import environ
 from secrets import token_bytes
 
@@ -6,6 +11,15 @@ from dotenv import load_dotenv
 
 
 if __name__ == "__main__":
+    BASE_DIR = abspath(dirname(__file__))
+    DEPLOY_DIR = join(BASE_DIR, "deploy")
+
+    if not exists(DEPLOY_DIR):
+        mkdir(DEPLOY_DIR)
+
+    environ.__setitem__("BASE_DIR", BASE_DIR)
+    environ.__setitem__("DEPLOY_DIR", DEPLOY_DIR)
+
     # import env
     load_dotenv()
 
