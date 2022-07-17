@@ -1,7 +1,6 @@
 from jwt import encode
 from jwt import decode
-# from jwt.exceptions import ?
-from fastapi import HTTPException
+from fastapi.security.http import HTTPAuthorizationCredentials
 from pydantic import BaseModel
 
 from utils.token import key
@@ -39,14 +38,17 @@ def create_token(user: str, project: str, permission: list) -> str:
             project=project,
             permission=DeployPermission(**options)
         ).dict(),
-        key=key,
+        key="deploy:" + key,
         algorithm=algorithms[0]
     )
 
 
-def parse_token(token: str) -> DeployPayload:
+def parse_token(token: str or HTTPAuthorizationCredentials) -> DeployPayload:
+    if isinstance(token, HTTPAuthorizationCredentials):
+        token = token.credentials
+
     return decode(
         jwt=token,
-        key=key,
+        key="deploy:" + key,
         algorithms=algorithms
     )
