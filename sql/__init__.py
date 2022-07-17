@@ -2,6 +2,7 @@ from os import environ
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
 from dotenv import load_dotenv
 
 if 'SQLALCHEMY_DATABASE_URI' not in environ:
@@ -16,5 +17,5 @@ engine = create_engine(
 session_factory = sessionmaker(bind=engine)
 
 
-def get_session():
+def get_session() -> Session:
     return session_factory()
