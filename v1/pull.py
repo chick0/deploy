@@ -86,7 +86,8 @@ async def pull_and_deploy(token=Depends(deploy)):
         command_output = run(
             project.command,
             capture_output=True,
-            cwd=project.path
+            cwd=project.path,
+            check=False
         )
 
         command_log = DeployLog()
