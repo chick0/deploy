@@ -1,2 +1,5 @@
 [MAIN]
 ignore-paths = alembic
+
+[MESSAGES CONTROL]
+disable = missing-module-docstring
