@@ -57,13 +57,13 @@ async def upload_and_deploy(file: UploadFile, token=Depends(deploy)):
     if not payload.permission.write:
         return UploadResult(
             result=False,
-            reason="쓰기 권한이 없어 해당 토큰을 사용 할 수 없습니다."
+            reason="프로젝트 쓰기 권한이 없어 해당 토큰으로 업로드 할 수 없습니다."
         )
 
     session = get_session()
-
     project: Project = session.query(Project).filter_by(
-        uuid=payload.project
+        uuid=payload.project,
+        type=ProjectType.FRONTEND.value
     ).first()
 
     if project is None:
@@ -71,13 +71,6 @@ async def upload_and_deploy(file: UploadFile, token=Depends(deploy)):
         return UploadResult(
             result=False,
             reason="등록된 프로젝트가 아닙니다."
-        )
-
-    if project.type != ProjectType.FRONTEND.value:
-        session.close()
-        return UploadResult(
-            result=False,
-            reason="프론트 프로젝트만 해당 방식으로 배포 할 수 있습니다."
         )
 
     head = await file.read(size=3)

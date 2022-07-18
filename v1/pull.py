@@ -29,7 +29,7 @@ async def pull_and_deploy(token=Depends(deploy)):
     if not payload.permission.write:
         return PullResult(
             result=False,
-            reason="쓰기 권한이 없어 해당 토큰을 사용 할 수 없습니다."
+            reason="프로젝트 쓰기 권한이 없어 해당 토큰으로 pull 명령을 사용 할 수 없습니다."
         )
 
     session = get_session()
