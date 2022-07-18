@@ -3,13 +3,16 @@ from pydantic import BaseModel
 
 class ProjectCreate(BaseModel):
     title: str
-    owner: str
+    type: int
+    path: str
 
 
 class Project(BaseModel):
     uuid: str
     title: str
     owner: str
+    type: int
+    path: str
 
 
 class ProjectList(BaseModel):
