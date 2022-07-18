@@ -22,3 +22,12 @@ def verify_type(project_type: int) -> bool:
         for x in dir(ProjectType)
         if isinstance(getattr(ProjectType, x), ProjectType)
     )
+
+
+class DeployLogType(Enum):
+    """
+    Type for Deploy Log
+    """
+    UPLOAD = 0
+    PULL = 1
+    COMMAND = 2

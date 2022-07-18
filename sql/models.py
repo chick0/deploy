@@ -3,8 +3,10 @@ from dataclasses import dataclass
 from sqlalchemy import Column
 from sqlalchemy import String
 from sqlalchemy import DateTime
+from sqlalchemy import Integer
 from sqlalchemy import SmallInteger
 from sqlalchemy import Boolean
+from sqlalchemy import Text
 from sqlalchemy import ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -143,4 +145,62 @@ class DeployToken(Base):
     delete = Column(
         Boolean,
         default=False
+    )
+
+
+@dataclass
+class DeployLog(Base):
+    """
+    Database models for deploy log
+    """
+    __tablename__ = "deploy_log"
+
+    id = Column(
+        Integer,
+        unique=True,
+        primary_key=True,
+        nullable=False
+    )
+
+    project = Column(
+        String(36),
+        ForeignKey("project.uuid")
+    )
+
+    create_by = Column(
+        String(36),
+        ForeignKey("user.uuid")
+    )
+
+    # utils.type.DeployLogType
+    type = Column(
+        SmallInteger,
+        nullable=False,
+    )
+
+    # when pull log
+    called_by = Column(
+        Integer,
+        ForeignKey("deploy_log.id"),
+        nullable=True
+    )
+
+    created_at = Column(
+        DateTime,
+        nullable=False,
+    )
+
+    return_code = Column(
+        Integer,
+        nullable=False
+    )
+
+    stdout = Column(
+        Text,
+        nullable=False
+    )
+
+    stderr = Column(
+        Text,
+        nullable=False
     )
