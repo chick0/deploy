@@ -60,23 +60,23 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
 
     try:
         session.commit()
-    except IntegrityError:
+    except IntegrityError as _error:
         session.close()
         raise HTTPException(
             status_code=400,
             detail={
                 "msg": "프로젝트를 생성하는 과정에서 오류가 발생했습니다."
             }
-        )
+        ) from _error
     # pylint: disable=broad-except
-    except Exception:
+    except Exception as _error:
         session.close()
         raise HTTPException(
             status_code=500,
             detail={
                 "msg": "프로젝트를 생성하는 과정에서 알 수 없는 오류가 발생했습니다."
             }
-        )
+        ) from _error
 
     try:
         return ProjectModel(
@@ -100,7 +100,8 @@ async def get_project_data(uuid: str, token=Depends(any_)):
     try:
         payload = parse_auth_token(token=token)
         token = "auth"
-    except (HTTPException, Exception):
+    # pylint: disable=broad-except
+    except (HTTPException, Exception) as _error:
         payload = parse_deploy_token(token=token)
         token = "deploy"
 
@@ -110,7 +111,7 @@ async def get_project_data(uuid: str, token=Depends(any_)):
                 detail={
                     "msg": "해당 배포 토큰은 프로젝트를 조회할 권한이 없습니다."
                 }
-            )
+            ) from _error
 
     session = get_session()
 
