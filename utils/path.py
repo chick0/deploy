@@ -1,6 +1,8 @@
 from os import urandom
 from os import environ
+from os import mkdir
 from os.path import join
+from os.path import exists
 
 
 def get_project_path(owner: str, project: str) -> str:
@@ -11,11 +13,23 @@ def get_project_path(owner: str, project: str) -> str:
     :param project: project uuid
     :return: path string
     """
-    return join(
+    user_dir = join(
         environ['DEPLOY_DIR'],
-        owner,
+        owner
+    )
+
+    if not exists(path=user_dir):
+        mkdir(path=user_dir)
+
+    project_dir = join(
+        user_dir,
         project
     )
+
+    if not exists(path=project_dir):
+        mkdir(path=project_dir)
+
+    return project_dir
 
 
 def get_temp_path(owner: str, project: str) -> str:
