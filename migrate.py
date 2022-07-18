@@ -32,6 +32,12 @@ def main() -> None:
             string=output.stdout.decode()
         )[0]
 
+        with open("README.temp", mode="r", encoding="utf-8") as md_reader:
+            markdown = md_reader.read()
+
+        with open("README.md", mode="w", encoding="utf-8") as md_writer:
+            md_writer.write(markdown.format(revision=revision))
+
         run(
             f"alembic upgrade {revision}",
             check=False
