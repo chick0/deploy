@@ -3,12 +3,12 @@ from uuid import uuid4
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import HTTPException
-from fastapi.security import HTTPBearer
 
 from sql import get_session
 from sql.models import User
 from sql.models import Project
 from sql.models import DeployToken
+from v1.const import auth
 from v1.models.token import TokenRequest
 from v1.models.token import TokenResponse
 from v1.models.token import TokenDelete
@@ -20,9 +20,6 @@ from utils.token.deploy import parse_token as parse_deploy_token
 
 router = APIRouter(
     tags=["Token"]
-)
-auth = HTTPBearer(
-    description="사용자 인증 토큰"
 )
 
 
