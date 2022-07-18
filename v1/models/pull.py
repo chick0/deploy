@@ -1,3 +1,5 @@
+from typing import Union
+
 from pydantic import BaseModel
 
 
@@ -7,3 +9,4 @@ class PullResult(BaseModel):
     """
     result: bool
     reason: str = "no reason"
+    log: Union[int, None] = None
