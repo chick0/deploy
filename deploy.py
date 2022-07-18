@@ -17,8 +17,7 @@ if __name__ == "__main__":
     if not exists(DEPLOY_DIR):
         mkdir(DEPLOY_DIR)
 
-    environ.__setitem__("BASE_DIR", BASE_DIR)
-    environ.__setitem__("DEPLOY_DIR", DEPLOY_DIR)
+    environ['DEPLOY_DIR'] = DEPLOY_DIR
 
     # import env
     load_dotenv()
@@ -30,7 +29,7 @@ if __name__ == "__main__":
         key: bytes = token_bytes(24)
         open(".JWT_SECRET", mode="wb").write(key)
 
-    environ.__setitem__("JWT_SECRET", key.hex())
+    environ['JWT_SECRET'] = key.hex()
 
     run(
         app="app:app",
