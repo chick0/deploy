@@ -16,4 +16,12 @@ router = APIRouter(
     response_model=UploadResult
 )
 async def upload_and_deploy(uuid: str, file: UploadFile, token=Depends(deploy)):
+    """
+    Upload deploy file then deploy system will unzip to deploy folder
+
+    :param uuid: project uuid
+    :param file: file to deploy
+    :param token:
+    :return: upload request result
+    """
     return {}

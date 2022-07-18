@@ -14,7 +14,6 @@ from v1.models.token import TokenDeleteResult
 from utils.token.auth import parse_token
 from utils.token.deploy import parse_permission
 from utils.token.deploy import create_token
-from utils.token.deploy import parse_token as parse_deploy_token
 from utils.uuid import get_uuid
 
 router = APIRouter(
@@ -91,23 +90,15 @@ async def create_token_for_deploy(request: TokenRequest, token=Depends(auth)):
 )
 async def delete_deploy_token(request: TokenDelete, token=Depends(auth)):
     payload = parse_token(token=token)
-    deploy = parse_deploy_token(token=request.token)
-
-    if payload.user != deploy.user:
-        return TokenDeleteResult(
-            result=False,
-            reason="배포 토큰을 생성한 사용자 만 배포 토큰을 삭제 할 수 있습니다."
-        )
-
     session = get_session()
 
     dpt: DeployToken = session.query(DeployToken).filter_by(
-        uuid=deploy.uuid,
-        project=deploy.project,
+        uuid=request.uuid,
         create_by=payload.user
     ).first()
 
     if dpt is None:
+        session.close()
         return TokenDeleteResult(
             result=False,
             reason="해당 배포 토큰을 조회 할 수 없습니다. 이미 삭제되었거나 권한이 잘못되었습니다."

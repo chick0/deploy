@@ -15,4 +15,11 @@ router = APIRouter(
     response_model=PullResult
 )
 async def pull_and_deploy(uuid: str, token=Depends(deploy)):
+    """
+    Run `git pull` command and restart server
+
+    :param uuid: project uuid
+    :param token: deploy token
+    :return: deploy request result
+    """
     return {}

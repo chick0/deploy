@@ -16,4 +16,10 @@ router = APIRouter(
     response_model=ProjectList
 )
 async def get_projects_list(token=Depends(auth)):
+    """
+    Get project list with auth token
+
+    :param token: auth token
+    :return: projects list which I created
+    """
     return {}

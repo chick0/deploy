@@ -2,12 +2,18 @@ from pydantic import BaseModel
 
 
 class ProjectCreate(BaseModel):
+    """
+    Payload for create Project
+    """
     title: str
     type: int
     path: str
 
 
 class Project(BaseModel):
+    """
+    Payload for read/write Project
+    """
     uuid: str
     title: str
     owner: str
@@ -15,10 +21,9 @@ class Project(BaseModel):
     path: str
 
 
-class ProjectList(BaseModel):
-    projectList: list[Project]
-
-
 class ProjectUpdateResult(BaseModel):
+    """
+    Response for Project update
+    """
     result: bool
     reason: str = "no reason"

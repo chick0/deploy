@@ -59,12 +59,21 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
 
     try:
         session.commit()
-    except (IntegrityError, Exception):
+    except IntegrityError:
         session.close()
         raise HTTPException(
             status_code=400,
             detail={
                 "msg": "프로젝트를 생성하는 과정에서 오류가 발생했습니다."
+            }
+        )
+    # pylint: disable=broad-except
+    except Exception:
+        session.close()
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "msg": "프로젝트를 생성하는 과정에서 알 수 없는 오류가 발생했습니다."
             }
         )
 
@@ -143,7 +152,7 @@ async def get_project_data(uuid: str, token=Depends(any_)):
 async def edit_project_data(request: ProjectModel, token=Depends(any_)):
     try:
         payload = parse_auth_token(token=token)
-    except (HTTPException, Exception):
+    except HTTPException:
         payload = parse_deploy_token(token=token)
         if request.uuid != payload.project:
             return ProjectUpdateResult(

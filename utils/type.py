@@ -18,9 +18,7 @@ def verify_type(project_type: int) -> bool:
     :return: verify result
     """
     return any(
-        [
-            getattr(ProjectType, x).value == project_type
-            for x in dir(ProjectType)
-            if isinstance(getattr(ProjectType, x), ProjectType)
-        ]
+        getattr(ProjectType, x).value == project_type
+        for x in dir(ProjectType)
+        if isinstance(getattr(ProjectType, x), ProjectType)
     )
