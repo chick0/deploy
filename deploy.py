@@ -12,11 +12,16 @@ from dotenv import load_dotenv
 
 if __name__ == "__main__":
     BASE_DIR = abspath(dirname(__file__))
+    TEMP_DIR = join(BASE_DIR, "temp")
     DEPLOY_DIR = join(BASE_DIR, "deploy")
+
+    if not exists(TEMP_DIR):
+        mkdir(TEMP_DIR)
 
     if not exists(DEPLOY_DIR):
         mkdir(DEPLOY_DIR)
 
+    environ['TEMP_DIR'] = TEMP_DIR
     environ['DEPLOY_DIR'] = DEPLOY_DIR
 
     # import env

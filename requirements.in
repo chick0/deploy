@@ -3,6 +3,7 @@ uvicorn
 pyjwt
 python-multipart
 python-dotenv
+aiofiles
 SQLAlchemy
 alembic
 mysqlclient
