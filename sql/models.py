@@ -99,6 +99,12 @@ class Project(Base):
         nullable=True
     )
 
+    # ignored in front project
+    command = Column(
+        String(255),
+        nullable=True
+    )
+
 
 @dataclass
 class DeployToken(Base):

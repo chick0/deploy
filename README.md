@@ -32,5 +32,5 @@
     - 그 다음 `SQLALCHEMY_DATABASE_URI`에는 본인의 데이터베이스 접속 관련 정보를 입력해주세요.
     - 그 다음 `ISS`는 토큰의 발급자(issuer)로 API 서버가 사용 할 도메인 주소를 입력해주세요.
 3. 데이터베이스 모델 적용
-    - `alembic upgrade 099ddb81865c`
+    - `alembic upgrade 4abcca9b324e`
     - 위 명령어를 통해 적용 할 수 있습니다.
