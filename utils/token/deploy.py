@@ -1,8 +1,11 @@
 from jwt import encode
 from jwt import decode
+from fastapi import HTTPException
 from fastapi.security.http import HTTPAuthorizationCredentials
 from pydantic import BaseModel
 
+from sql import get_session
+from sql.models import DeployToken
 from utils.token import key
 from utils.token import algorithms
 from utils.token import iss
@@ -81,10 +84,22 @@ def parse_token(token: str or HTTPAuthorizationCredentials) -> DeployPayload:
     if isinstance(token, HTTPAuthorizationCredentials):
         token = token.credentials
 
-    # TODO:check with database
-
-    return decode(
+    payload: DeployPayload = decode(
         jwt=token,
         key="deploy:" + key,
         algorithms=algorithms
     )
+
+    session = get_session()
+
+    if session.query(DeployToken).filter_by(
+        uuid=payload.uuid
+    ).count():
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "msg": "삭제된 배포 토큰입니다."
+            }
+        )
+
+    return payload
