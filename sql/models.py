@@ -192,15 +192,15 @@ class DeployLog(Base):
 
     return_code = Column(
         Integer,
-        nullable=False
+        nullable=True
     )
 
     stdout = Column(
         Text,
-        nullable=False
+        nullable=True
     )
 
     stderr = Column(
         Text,
-        nullable=False
+        nullable=True
     )
