@@ -20,13 +20,8 @@ router = APIRouter(
     description="아이디와 비밀번호로 로그인 합니다.",
     response_model=LoginResponse
 )
+# pylint: disable=missing-function-docstring
 async def create_auth_token(request: LoginRequest):
-    """
-    Creating an authentication token by login
-
-    :param request: login request
-    :return: login response
-    """
     session = get_session()
     user: User = session.query(User).filter_by(
         email=request.email,

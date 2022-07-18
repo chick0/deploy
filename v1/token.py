@@ -26,6 +26,7 @@ router = APIRouter(
     description="프로젝트 배포에 사용할 토큰을 생성합니다.",
     response_model=TokenResponse
 )
+# pylint: disable=missing-function-docstring
 async def create_token_for_deploy(request: TokenRequest, token=Depends(auth)):
     payload = parse_token(token=token)
     session = get_session()
@@ -88,6 +89,7 @@ async def create_token_for_deploy(request: TokenRequest, token=Depends(auth)):
     description="등록된 토큰을 삭제합니다.",
     response_model=TokenDeleteResult
 )
+# pylint: disable=missing-function-docstring
 async def delete_deploy_token(request: TokenDelete, token=Depends(auth)):
     payload = parse_token(token=token)
     session = get_session()

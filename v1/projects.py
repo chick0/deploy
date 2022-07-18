@@ -15,11 +15,6 @@ router = APIRouter(
     description="등록한 프로젝트 목록을 확인합니다.",
     response_model=ProjectList
 )
+# pylint: disable=missing-function-docstring
 async def get_projects_list(token=Depends(auth)):
-    """
-    Get project list with auth token
-
-    :param token: auth token
-    :return: projects list which I created
-    """
     return {}

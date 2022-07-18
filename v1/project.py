@@ -27,6 +27,7 @@ router = APIRouter(
     description="새로운 프로젝트를 등록합니다.",
     response_model=ProjectModel
 )
+# pylint: disable=missing-function-docstring
 async def create_project(request: ProjectCreate, token=Depends(auth)):
     payload = parse_auth_token(token=token)
 
@@ -94,6 +95,7 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
     description="등록된 프로젝트 정보를 불러옵니다.",
     response_model=ProjectModel
 )
+# pylint: disable=missing-function-docstring
 async def get_project_data(uuid: str, token=Depends(any_)):
     try:
         payload = parse_auth_token(token=token)
@@ -149,6 +151,7 @@ async def get_project_data(uuid: str, token=Depends(any_)):
     description="등록된 프로젝트 정보를 수정합니다.",
     response_model=ProjectUpdateResult
 )
+# pylint: disable=missing-function-docstring
 async def edit_project_data(request: ProjectModel, token=Depends(any_)):
     try:
         payload = parse_auth_token(token=token)
@@ -205,6 +208,7 @@ async def edit_project_data(request: ProjectModel, token=Depends(any_)):
     description="등록된 프로젝트를 삭제합니다.",
     response_model=ProjectUpdateResult
 )
+# pylint: disable=missing-function-docstring
 async def delete_project(uuid: str, token=Depends(auth)):
     payload = parse_auth_token(token=token)
 
