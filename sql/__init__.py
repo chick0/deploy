@@ -18,4 +18,9 @@ session_factory = sessionmaker(bind=engine)
 
 
 def get_session() -> Session:
+    """
+    Get sqlalchemy session
+
+    :return: sqlalchemy session
+    """
     return session_factory()

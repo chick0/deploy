@@ -9,12 +9,18 @@ from utils.token import iss
 
 
 class DeployPermission(BaseModel):
+    """
+    Permission model for deploy token
+    """
     read: bool
     write: bool
     delete: bool
 
 
 class DeployPayload(BaseModel):
+    """
+    Payload for deploy token
+    """
     uuid: str
     user: str
     project: str
@@ -24,19 +30,33 @@ class DeployPayload(BaseModel):
 
 
 def parse_permission(permission: list) -> DeployPermission:
-    options = {}
-    [options.update({x: False}) for x in DeployPermission.schema()['properties']]
+    """
+    Parse permission list to model
 
-    for x in [x.lower() for x in permission]:
-        if x in DeployPermission.schema()['properties']:
-            options[x] = True
+    :param permission: list of required permission
+    :return: permission model
+    """
+    options = {}
+
+    for prop in DeployPermission.schema()['properties']:
+        if prop in permission:
+            options[prop] = True
         else:
-            raise TypeError(f"'{x}' it not allowed permission.")
+            options[prop] = False
 
     return DeployPermission(**options)
 
 
 def create_token(uuid: str, user: str, project: str, permission: list) -> str:
+    """
+    Create Deploy token
+
+    :param uuid: deploy token uuid
+    :param user: user uuid
+    :param project: project uuid
+    :param permission: permission list
+    :return: jwt token
+    """
     return encode(
         payload=DeployPayload(
             uuid=uuid,
@@ -52,8 +72,16 @@ def create_token(uuid: str, user: str, project: str, permission: list) -> str:
 
 
 def parse_token(token: str or HTTPAuthorizationCredentials) -> DeployPayload:
+    """
+    Parse deploy token
+
+    :param token: deploy token
+    :return: Deploy token payload
+    """
     if isinstance(token, HTTPAuthorizationCredentials):
         token = token.credentials
+
+    # TODO:check with database
 
     return decode(
         jwt=token,

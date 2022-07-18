@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from sqlalchemy import Column
 from sqlalchemy import String
 from sqlalchemy import DateTime
@@ -9,7 +11,11 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
+@dataclass
 class User(Base):
+    """
+    Database models for check login and auth
+    """
     __tablename__ = "user"
 
     uuid = Column(
@@ -41,11 +47,12 @@ class User(Base):
         nullable=False,
     )
 
-    def __repr__(self):
-        return f"<User uuid={self.uuid!r}, email={self.email!r}>"
 
-
+@dataclass
 class Project(Base):
+    """
+    Database models for manage project
+    """
     __tablename__ = "project"
 
     uuid = Column(
@@ -92,11 +99,12 @@ class Project(Base):
         nullable=True
     )
 
-    def __repr__(self):
-        return f"<Project uuid={self.uuid!r} owner={self.owner!r}, title={self.title!r}>"
 
-
+@dataclass
 class DeployToken(Base):
+    """
+    Database models for check deploy token
+    """
     __tablename__ = "deploy_token"
 
     uuid = Column(
@@ -130,6 +138,3 @@ class DeployToken(Base):
         Boolean,
         default=False
     )
-
-    def __repr__(self):
-        return f"<DeployToken uuid={self.uuid!r} create_by={self.create_by!r}>"

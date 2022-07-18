@@ -11,6 +11,9 @@ from utils.token import exp
 
 
 class AuthPayload(BaseModel):
+    """
+    Payload for Auth token
+    """
     user: str
     # registered claim #
     iss: str = iss
@@ -19,6 +22,12 @@ class AuthPayload(BaseModel):
 
 
 def create_token(user: str) -> str:
+    """
+    Create Auth token
+
+    :param user: user uuid
+    :return: jwt token
+    """
     return encode(
         payload=AuthPayload(
             user=user,
@@ -31,6 +40,12 @@ def create_token(user: str) -> str:
 
 
 def parse_token(token: str or HTTPAuthorizationCredentials) -> AuthPayload:
+    """
+    Parse Auth token
+
+    :param token: auth token
+    :return: Auth token payload
+    """
     if isinstance(token, HTTPAuthorizationCredentials):
         token = token.credentials
 

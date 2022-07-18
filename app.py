@@ -5,14 +5,20 @@ from fastapi import FastAPI
 from fastapi import APIRouter
 
 try:
-    version = open(join(".git", open(join(".git", "HEAD"), mode="r").read()[5:].strip()), mode="r").read()[:7]
-except (FileNotFoundError, Exception):
-    version = "*MISSING HEAD*"
+    ENCODING = "utf-8"
+
+    with open(join(".git", "HEAD"), mode="r", encoding=ENCODING) as head_reader:
+        head = head_reader.read()[5:].strip()
+
+    with open(join(".git", head), mode="r", encoding=ENCODING) as hash_reader:
+        VERSION = hash_reader.read()[:7]
+except FileNotFoundError:
+    VERSION = "*MISSING HEAD*"
 
 app = FastAPI(
     title="Deploy API",
     description="배포를 도와주는 API 서버",
-    version=version,
+    version=VERSION,
     openapi_url="/openapi.json" if '--dev' in argv else None
 )
 

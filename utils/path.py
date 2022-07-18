@@ -3,6 +3,13 @@ from os.path import join
 
 
 def get_project_path(owner: str, project: str) -> str:
+    """
+    Get project path
+
+    :param owner: user(owner) uuid
+    :param project: project uuid
+    :return: path string
+    """
     return join(
         environ['DEPLOY_DIR'],
         owner,

@@ -24,10 +24,12 @@ if __name__ == "__main__":
 
     # set jwt secret
     try:
-        key: bytes = open(".JWT_SECRET", mode="rb").read()
-    except (FileNotFoundError, Exception):
+        with open(".JWT_SECRET", mode="rb") as key_reader:
+            key: bytes = key_reader.read()
+    except FileNotFoundError:
         key: bytes = token_bytes(24)
-        open(".JWT_SECRET", mode="wb").write(key)
+        with open(".JWT_SECRET", mode="wb") as key_writer:
+            key_writer.write(key)
 
     environ['JWT_SECRET'] = key.hex()
 

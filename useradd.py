@@ -1,16 +1,21 @@
-from uuid import uuid4
 from hashlib import sha512
 from datetime import datetime
 
 from sql import get_session
 from sql.models import User
+from utils.uuid import get_uuid
 
 
-def main():
+def main() -> None:
+    """
+    Create user
+
+    :return:
+    """
     session = get_session()
 
     user = User()
-    user.uuid = uuid4().__str__()
+    user.uuid = get_uuid()
     user.email = input("email=")
     user.password = sha512(input("password=").encode()).hexdigest()
     user.created_at = datetime.now()

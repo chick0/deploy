@@ -1,4 +1,3 @@
-from uuid import uuid4
 from datetime import datetime
 
 from fastapi import APIRouter
@@ -16,6 +15,7 @@ from v1.models.project import ProjectUpdateResult
 from utils.token.auth import parse_token as parse_auth_token
 from utils.token.deploy import parse_token as parse_deploy_token
 from utils.type import verify_type
+from utils.uuid import get_uuid
 
 router = APIRouter(
     tags=["Project"]
@@ -39,7 +39,7 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
         )
 
     project = Project()
-    project.uuid = uuid4().__str__()
+    project.uuid = get_uuid()
     project.title = request.title.strip()
     project.owner = payload.user
     project.created_at = datetime.now()

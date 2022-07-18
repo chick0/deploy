@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import HTTPException
@@ -17,6 +15,7 @@ from utils.token.auth import parse_token
 from utils.token.deploy import parse_permission
 from utils.token.deploy import create_token
 from utils.token.deploy import parse_token as parse_deploy_token
+from utils.uuid import get_uuid
 
 router = APIRouter(
     tags=["Token"]
@@ -62,7 +61,7 @@ async def create_token_for_deploy(request: TokenRequest, token=Depends(auth)):
     )
 
     dpt = DeployToken()
-    dpt.uuid = uuid4().__str__()
+    dpt.uuid = get_uuid()
     dpt.project = project.uuid
     dpt.create_by = user.uuid
     dpt.read = permission.read

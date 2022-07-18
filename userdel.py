@@ -3,7 +3,12 @@ from sql.models import User
 from sql.models import Project
 
 
-def main():
+def main() -> None:
+    """
+    Delete user with user email
+
+    :return:
+    """
     session = get_session()
 
     email = input("email=")
@@ -14,7 +19,7 @@ def main():
 
     if user is None:
         print("-> undefined user")
-        return -1
+        return
 
     project: int = session.query(Project).filter_by(
         owner=user.uuid
@@ -23,7 +28,7 @@ def main():
     if project != 0:
         print(f"-> this user has {project} project.")
         print("-> request ignored")
-        return -2
+        return
 
     print()
     print("*", user.uuid)

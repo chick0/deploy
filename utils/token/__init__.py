@@ -7,5 +7,21 @@ algorithms = ['HS256']
 
 # registered claim #
 iss = environ['ISS']
-iat = lambda: datetime.now().timestamp()
-exp = lambda: (datetime.now() + timedelta(hours=3)).timestamp()
+
+
+def iat() -> int:
+    """
+    Get token issued time
+
+    :return: (iat) issued at
+    """
+    return int(datetime.now().timestamp())
+
+
+def exp() -> int:
+    """
+    Get token expiration time
+
+    :return: (exp) expiration
+    """
+    return int((datetime.now() + timedelta(hours=3)).timestamp())
