@@ -1,6 +1,13 @@
 from pydantic import BaseModel
 
 
+class TokenVerify(BaseModel):
+    """
+    Repsonse for token verify
+    """
+    result: bool
+
+
 class LoginRequest(BaseModel):
     """
     Payload for login

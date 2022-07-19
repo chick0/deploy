@@ -2,17 +2,41 @@ from hashlib import sha512
 from datetime import datetime
 
 from fastapi import APIRouter
+from fastapi import Depends
 from fastapi import HTTPException
 
 from sql import get_session
 from sql.models import User
+from v1.const import auth
+from v1.models.auth import TokenVerify
 from v1.models.auth import LoginRequest
 from v1.models.auth import LoginResponse
 from utils.token.auth import create_token
+from utils.token.auth import parse_token
 
 router = APIRouter(
     tags=["Auth"]
 )
+
+
+@router.get(
+    "/auth",
+    description="인증 토큰을 검사합니다.",
+    response_model=TokenVerify
+)
+# pylint: disable=missing-function-docstring
+async def verify_auth_token(token=Depends(auth)):
+    try:
+        parse_token(token=token)
+    # pylint: disable=broad-except
+    except (HTTPException, Exception):
+        return TokenVerify(
+            result=False
+        )
+
+    return TokenVerify(
+        result=True
+    )
 
 
 @router.post(
