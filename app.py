@@ -1,8 +1,10 @@
 from sys import argv
+from os import environ
 from os.path import join
 
 from fastapi import FastAPI
 from fastapi import APIRouter
+from fastapi.middleware.cors import CORSMiddleware
 
 try:
     ENCODING = "utf-8"
@@ -20,6 +22,20 @@ app = FastAPI(
     description="배포를 도와주는 API 서버",
     version=VERSION,
     openapi_url="/openapi.json" if '--dev' in argv else None
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[environ['CORS_ORIGIN'].strip()],
+    allow_methods=[
+        "GET",
+        "PATCH",
+        "POST",
+        "DELETE"
+    ],
+    allow_headers=[
+        "Authorization"
+    ]
 )
 
 api = APIRouter(prefix="/api")
