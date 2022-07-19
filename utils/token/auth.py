@@ -52,5 +52,6 @@ def parse_token(token: str or HTTPAuthorizationCredentials) -> AuthPayload:
     return decode(
         jwt=token,
         key="auth:" + key,
-        algorithms=algorithms
+        algorithms=algorithms,
+        issuer=iss
     )

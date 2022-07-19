@@ -87,7 +87,8 @@ def parse_token(token: str or HTTPAuthorizationCredentials) -> DeployPayload:
     payload: DeployPayload = decode(
         jwt=token,
         key="deploy:" + key,
-        algorithms=algorithms
+        algorithms=algorithms,
+        issuer=iss
     )
 
     session = get_session()
