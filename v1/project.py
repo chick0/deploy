@@ -1,3 +1,4 @@
+from os import name as os_name
 from datetime import datetime
 
 from fastapi import APIRouter
@@ -48,6 +49,14 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
     project.type = request.type
 
     if project.type != ProjectType.FRONTEND.value:
+        if os_name == "nt":
+            raise HTTPException(
+                status_code=500,
+                detail={
+                    "msg": "해당 기능은 윈도우 서버에서 사용할 수 없습니다."
+                }
+            )
+
         project.path = request.path.strip()
         project.command = request.command.strip()
 
