@@ -14,6 +14,7 @@ from v1.models.project import Project as ProjectModel
 from v1.models.project import ProjectUpdateResult
 from utils.token.auth import parse_token as parse_auth_token
 from utils.token.deploy import parse_token as parse_deploy_token
+from utils.type import ProjectType
 from utils.type import verify_type
 from utils.uuid import get_uuid
 
@@ -45,7 +46,29 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
     project.owner = payload.user
     project.created_at = datetime.now()
     project.type = request.type
-    project.path = request.path.strip()
+
+    if project.type != ProjectType.FRONTEND.value:
+        project.path = request.path.strip()
+        project.command = request.command.strip()
+
+        if len(project.path) == 0:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "msg": "프로젝트 경로는 빈칸이 될 수 없습니다."
+                }
+            )
+
+        if len(project.command) == 0:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "msg": "서비스 재시작 명렁어는 빈칸이 될 수 없습니다."
+                }
+            )
+    else:
+        project.path = ""
+        project.command = ""
 
     if len(project.title) == 0:
         raise HTTPException(
@@ -84,7 +107,8 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
             title=project.title,
             owner=project.owner,
             type=project.type,
-            path=project.path
+            path=project.path,
+            command=project.command
         )
     finally:
         session.close()

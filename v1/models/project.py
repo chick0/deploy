@@ -8,6 +8,7 @@ class ProjectCreate(BaseModel):
     title: str
     type: int
     path: str
+    command: str
 
 
 class Project(BaseModel):
@@ -19,6 +20,7 @@ class Project(BaseModel):
     owner: str
     type: int
     path: str
+    command: str
 
 
 class ProjectUpdateResult(BaseModel):

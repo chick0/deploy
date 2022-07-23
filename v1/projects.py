@@ -43,7 +43,8 @@ async def get_projects_list(token=Depends(auth)):
                     title=ctx.title,
                     owner=ctx.owner,
                     type=ctx.type,
-                    path=ctx.path
+                    path=ctx.path,
+                    command=ctx.command
                 )
                 for ctx in session.query(Project).filter_by(
                     owner=payload.user
