@@ -84,12 +84,12 @@ def parse_token(token: str or HTTPAuthorizationCredentials) -> DeployPayload:
     if isinstance(token, HTTPAuthorizationCredentials):
         token = token.credentials
 
-    payload: DeployPayload = decode(
+    payload = DeployPayload(**decode(
         jwt=token,
         key="deploy:" + key,
         algorithms=algorithms,
         issuer=iss
-    )
+    ))
 
     session = get_session()
 

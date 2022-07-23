@@ -49,9 +49,9 @@ def parse_token(token: str or HTTPAuthorizationCredentials) -> AuthPayload:
     if isinstance(token, HTTPAuthorizationCredentials):
         token = token.credentials
 
-    return decode(
+    return AuthPayload(**decode(
         jwt=token,
         key="auth:" + key,
         algorithms=algorithms,
         issuer=iss
-    )
+    ))
