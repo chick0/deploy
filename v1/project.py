@@ -154,7 +154,12 @@ async def get_project_data(uuid: str, token=Depends(any_)):
             owner=payload.user
         ).first()
     else:
+        # token type can be "auth" or "deploy"
+        # in this case token must be "deploy token"
+        # but pylint scan this to "auth token"
+        # so this warning has been ignored
         project: Project = session.query(Project).filter_by(
+            # pylint: disable=no-member
             uuid=payload.project,
             owner=payload.user
         ).first()
