@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class TokenVerify(BaseModel):
     """
-    Repsonse for token verify
+    Response for token verify
     """
     result: bool
 
