@@ -178,7 +178,7 @@ class DeployLog(Base):
         nullable=False,
     )
 
-    # when pull log
+    # when command log
     called_by = Column(
         Integer,
         ForeignKey("deploy_log.id"),
