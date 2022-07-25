@@ -14,7 +14,11 @@ engine = create_engine(
     max_overflow=20
 )
 
-session_factory = sessionmaker(bind=engine)
+session_factory = sessionmaker(
+    bind=engine,
+    autocommit=False,
+    autoflush=False,
+)
 
 
 def get_session() -> Session:
