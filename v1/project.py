@@ -124,7 +124,7 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
 
 
 @router.get(
-    "/project/:uuid",
+    "/project/{uuid}",
     description="등록된 프로젝트 정보를 불러옵니다.",
     response_model=ProjectModel
 )
@@ -243,7 +243,7 @@ async def edit_project_data(request: ProjectModel, token=Depends(any_)):
 
 
 @router.delete(
-    "/project/:uuid",
+    "/project/{uuid}",
     description="등록된 프로젝트를 삭제합니다.",
     response_model=ProjectUpdateResult
 )
