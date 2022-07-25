@@ -15,6 +15,7 @@ from v1.models.project import Project as ProjectModel
 from v1.models.project import ProjectUpdateResult
 from utils.token.auth import parse_token as parse_auth_token
 from utils.token.deploy import parse_token as parse_deploy_token
+from utils.check import check_project
 from utils.type import ProjectType
 from utils.type import verify_type
 from utils.uuid import get_uuid
@@ -111,14 +112,7 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
         ) from _error
 
     try:
-        return ProjectModel(
-            uuid=project.uuid,
-            title=project.title,
-            owner=project.owner,
-            type=project.type,
-            path=project.path,
-            command=project.command
-        )
+        return ProjectModel(**project.__dict__)
     finally:
         session.close()
 
@@ -149,38 +143,25 @@ async def get_project_data(uuid: str, token=Depends(any_)):
     session = get_session()
 
     if token == "auth":
-        project: Project = session.query(Project).filter_by(
+        project: Project = check_project(
+            session=session,
             uuid=uuid,
-            owner=payload.user
-        ).first()
+            user=payload.user
+        )
     else:
         # token type can be "auth" or "deploy"
         # in this case token must be "deploy token"
         # but pylint scan this to "auth token"
         # so this warning has been ignored
-        project: Project = session.query(Project).filter_by(
+        project: Project = check_project(
+            session=session,
             # pylint: disable=no-member
             uuid=payload.project,
-            owner=payload.user
-        ).first()
-
-    if project is None:
-        session.close()
-        raise HTTPException(
-            status_code=404,
-            detail={
-                "msg": "등록된 프로젝트가 아닙니다."
-            }
+            user=payload.user
         )
 
     try:
-        return ProjectModel(
-            uuid=project.uuid,
-            title=project.title,
-            owner=project.owner,
-            type=project.type,
-            path=project.path
-        )
+        return ProjectModel(**project.__dict__)
     finally:
         session.close()
 

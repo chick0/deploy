@@ -1,5 +1,6 @@
 __all__ = [
     "auth",
+    "log",
     "project",
     "projects",
     "token",
