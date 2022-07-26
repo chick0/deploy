@@ -1,5 +1,7 @@
 from jwt import encode
 from jwt import decode
+from jwt.exceptions import DecodeError
+from fastapi import HTTPException
 from fastapi.security.http import HTTPAuthorizationCredentials
 from pydantic import BaseModel
 
@@ -49,9 +51,17 @@ def parse_token(token: str or HTTPAuthorizationCredentials) -> AuthPayload:
     if isinstance(token, HTTPAuthorizationCredentials):
         token = token.credentials
 
-    return AuthPayload(**decode(
-        jwt=token,
-        key="auth:" + key,
-        algorithms=algorithms,
-        issuer=iss
-    ))
+    try:
+        return AuthPayload(**decode(
+            jwt=token,
+            key="auth:" + key,
+            algorithms=algorithms,
+            issuer=iss
+        ))
+    except DecodeError as decode_fail:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "msg": "배포 토큰이 올바르지 않습니다."
+            }
+        ) from decode_fail
