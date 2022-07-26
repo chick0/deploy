@@ -1,6 +1,24 @@
 from pydantic import BaseModel
 
 
+class TokenUUID(BaseModel):
+    """
+    Deploy Token Data
+    """
+    uuid: str
+    create_by: str
+    read: bool
+    write: bool
+    delete: bool
+
+
+class TokenUUIDList(BaseModel):
+    """
+    List of Token UUID
+    """
+    tokenList: list[TokenUUID]
+
+
 class TokenRequest(BaseModel):
     """
     Payload for create deploy token

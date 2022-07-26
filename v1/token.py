@@ -7,6 +7,8 @@ from sql.models import User
 from sql.models import Project
 from sql.models import DeployToken
 from v1.const import auth
+from v1.models.token import TokenUUID
+from v1.models.token import TokenUUIDList
 from v1.models.token import TokenRequest
 from v1.models.token import TokenResponse
 from v1.models.token import TokenDelete
@@ -14,11 +16,47 @@ from v1.models.token import TokenDeleteResult
 from utils.token.auth import parse_token
 from utils.token.deploy import parse_permission
 from utils.token.deploy import create_token
+from utils.check import check_project
 from utils.uuid import get_uuid
 
 router = APIRouter(
     tags=["Token"]
 )
+
+
+@router.get(
+    "/token/{project_uuid}",
+    description="프로젝트에 생성된 배포 토큰 목록을 가져옵니다.",
+    response_model=TokenUUIDList
+)
+# pylint: disable=missing-function-docstring
+async def get_deploy_token_list(project_uuid: str, token=Depends(auth)):
+    payload = parse_token(token=token)
+    session = get_session()
+
+    check_project(
+        session=session,
+        uuid=project_uuid,
+        user=payload.user
+    )
+
+    try:
+        return TokenUUIDList(
+            tokenList=[
+                TokenUUID(**token)
+                for token in session.query(DeployToken).filter_by(
+                    project=project_uuid
+                ).with_entities(
+                    DeployToken.uuid,
+                    DeployToken.create_by,
+                    DeployToken.read,
+                    DeployToken.write,
+                    DeployToken.delete,
+                ).all()
+            ]
+        )
+    finally:
+        session.close()
 
 
 @router.post(
