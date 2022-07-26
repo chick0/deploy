@@ -6,6 +6,7 @@ __all__ = [
     "token",
     "pull",
     "upload",
+    "user",
 ]
 
 from fastapi import APIRouter
