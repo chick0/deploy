@@ -11,6 +11,14 @@ class ProjectCreate(BaseModel):
     command: str
 
 
+class ProjectCreated(BaseModel):
+    """
+    Response for create project
+    """
+    uuid: str
+    title: str
+
+
 class Project(BaseModel):
     """
     Payload for read/write Project

@@ -11,6 +11,7 @@ from sql.models import Project
 from v1.const import auth
 from v1.const import any_
 from v1.models.project import ProjectCreate
+from v1.models.project import ProjectCreated
 from v1.models.project import Project as ProjectModel
 from v1.models.project import ProjectUpdateResult
 from utils.token.auth import parse_token as parse_auth_token
@@ -28,7 +29,7 @@ router = APIRouter(
 @router.post(
     "/project",
     description="새로운 프로젝트를 등록합니다.",
-    response_model=ProjectModel
+    response_model=ProjectCreated
 )
 # pylint: disable=missing-function-docstring
 async def create_project(request: ProjectCreate, token=Depends(auth)):
@@ -42,9 +43,12 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
             }
         )
 
+    uuid = get_uuid()
+    title = request.title.strip()
+
     project = Project()
-    project.uuid = get_uuid()
-    project.title = request.title.strip()
+    project.uuid = uuid
+    project.title = title
     project.owner = payload.user
     project.created_at = datetime.now()
     project.type = request.type
@@ -94,7 +98,6 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
     try:
         session.commit()
     except IntegrityError as _error:
-        session.close()
         raise HTTPException(
             status_code=400,
             detail={
@@ -103,18 +106,19 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
         ) from _error
     # pylint: disable=broad-except
     except Exception as _error:
-        session.close()
         raise HTTPException(
             status_code=500,
             detail={
                 "msg": "프로젝트를 생성하는 과정에서 알 수 없는 오류가 발생했습니다."
             }
         ) from _error
-
-    try:
-        return ProjectModel(**project.__dict__)
     finally:
         session.close()
+
+    return ProjectCreated(
+        uuid=uuid,
+        title=title
+    )
 
 
 @router.get(
