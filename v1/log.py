@@ -90,7 +90,7 @@ async def get_detail_of_deploy_log(uuid: str, log_id: int, token=Depends(auth)):
             child=None if dpl.type == DeployLogType.UPLOAD.value
             else Log(**session.query(DeployLog).filter_by(
                 called_by=dpl.id
-            ).first())
+            ).first().__dict__)
         )
     finally:
         session.close()
