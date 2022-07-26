@@ -7,7 +7,7 @@
 1. upload
     - push이후 빌드된 파일을 압축해서 API로 업로드하면 API가 압축 풀고 적용
 2. pull
-    - push이후 API로 신호가 오면 API가 `git pull` 명령을 실행 한 다음 서버 재시작
+    - push이후 API로 신호가 오면 API가 `git pull` 명령을 실행 한 다음 지정한 명령어 실행
 
 두 방법 모두 별도의 [deploy-cli](#)를 사용합니다.
 

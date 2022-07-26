@@ -72,14 +72,6 @@ async def create_project(request: ProjectCreate, token=Depends(auth)):
                     "msg": "프로젝트 경로는 빈칸이 될 수 없습니다."
                 }
             )
-
-        if len(project.command) == 0:
-            raise HTTPException(
-                status_code=400,
-                detail={
-                    "msg": "서비스 재시작 명렁어는 빈칸이 될 수 없습니다."
-                }
-            )
     else:
         project.path = ""
         project.command = ""

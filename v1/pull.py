@@ -108,7 +108,7 @@ async def pull_and_deploy(token=Depends(deploy)):
             try:
                 return PullResult(
                     result=False,
-                    reason="재시작 명령 실행 과정에서 오류가 발생했습니다.",
+                    reason="명령어 실행 과정에서 오류가 발생했습니다.",
                     log=command_log.id
                 )
             finally:
