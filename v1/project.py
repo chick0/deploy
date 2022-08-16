@@ -242,7 +242,13 @@ async def delete_project(uuid: str, token=Depends(auth)):
 
     title = project.title
 
-    return ProjectUpdateResult(
-        result=True,
-        reason=f"'{title}' 프로젝트가 삭제되었습니다."
-    )
+    session.delete(project)
+    session.commit()
+
+    try:
+        return ProjectUpdateResult(
+            result=True,
+            reason=f"'{title}' 프로젝트가 삭제되었습니다."
+        )
+    finally:
+        session.close()
