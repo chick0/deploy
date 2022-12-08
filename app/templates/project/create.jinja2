@@ -1,0 +1,39 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+<div class="section">
+    <div class="container">
+        <h1 class="title is-1 has-text-centered">프로젝트 생성</h1>
+
+        <div class="columns is-centered">
+            <div class="column is-one-third">
+                {% for message in get_flashed_messages(category_filter=["project.create"]) %}
+                    <div class="message is-danger">
+                        <div class="message-header">
+                            <p>프로젝트 생성 실패</p>
+                        </div>
+                        <div class="message-body">
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <form class="box" method="post">
+                    <div class="field">
+                        <label class="label">프로젝트 이름</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="name" placeholder="4글자 이상, 100자 이하" name="name" minlength="4" maxlength="100" required>
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-file"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <button class="button is-primary is-medium is-fullwidth" type="submit">다음</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,6 +3,23 @@
 <div class="section">
     <div class="container">
         <h1 class="title is-1 has-text-centered">프로젝트 목록</h1>
+        {% for project in project_list %}
+            <div id="project-{{ project.id }}" class="box">
+                <h2 class="title is-4">{{ project.name }}</h2>
+                <div class="content is-medium">
+                    <p><span class="tag is-success is-medium">생성</span> {{ project.created_at }}</p>
+                    {% if project.last_deploy is none%}
+                        <p><span class="tag is-warning is-medium">배포</span> 배포 기록이 없습니다!</p>
+                    {% else %}
+                        <p><span class="tag is-success is-medium">배포</span> {{ project.last_deploy }}</p>
+                    {% endif %}
+                </div>
+                <hr>
+                <button class="button is-link is-medium is-fullwidth dp-more" data-project="{{ project.id }}">프로젝트 자세히 보기</button>
+            </div>
+        {% endfor %}
     </div>
 </div>
+
+<script src="{{ url_for('static', filename='project-list.js') }}"></script>
 {% endblock %}
