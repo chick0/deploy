@@ -1,7 +1,4 @@
 .env
-.JWT_SECRET
-.idea
-venv
-__pycache__
-deploy
-temp
+.key
+__pycache__/
+venv/

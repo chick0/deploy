@@ -1,9 +1,6 @@
-fastapi
-uvicorn
-pyjwt
-python-multipart
-python-dotenv
-aiofiles
-SQLAlchemy
-alembic
+flask
+flask-migrate
+flask-sqlalchemy
 mysqlclient
+python-dotenv
+waitress

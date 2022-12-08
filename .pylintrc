@@ -1,8 +1,0 @@
-[MAIN]
-ignore-paths = alembic
-
-# https://github.com/samuelcolvin/pydantic/issues/1961#issuecomment-941539726
-extension-pkg-whitelist=pydantic
-
-[MESSAGES CONTROL]
-disable = missing-module-docstring
