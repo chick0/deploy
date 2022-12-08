@@ -1,6 +1,7 @@
 from os import environ
 from hashlib import sha512
 from secrets import token_bytes
+from datetime import datetime
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -25,7 +26,7 @@ def main(email: Optional[str] = None):
     user = User()
     user.email = email.strip()
     user.password = sha512(password.encode()).hexdigest()
-    user.created_at = None
+    user.created_at = datetime.now()
 
     session = get_session()()
     session.add(user)

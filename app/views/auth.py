@@ -67,7 +67,7 @@ def login_post():
         flash("등록된 계정이 아닙니다.", "login")
         return redirect(url_for("auth.login"))
 
-    if user.created_at is None:
+    if user.password_updated_at is None:
         session['tmp+user.id'] = user.id
         session['tmp+user.email'] = user.email
         return redirect(url_for("auth.password_update"))
@@ -75,7 +75,7 @@ def login_post():
     session['user.id'] = user.id
     session['user.password'] = user.password
 
-    user.last_login = datetime.now()
+    user.last_login_at = datetime.now()
     db.session.commit()
 
     return redirect(url_for("project.get_list"))
@@ -104,7 +104,7 @@ def password_update_post():
         flash("로그인이 필요합니다.")
         return redirect(url_for("auth.login"))
 
-    user = User.query.filter_by(
+    user: User = User.query.filter_by(
         id=user_id,
         email=email
     ).first()
@@ -120,8 +120,8 @@ def password_update_post():
         return redirect(url_for("auth.password_update"))
 
     user.password = sha512(password.encode()).hexdigest()
-    user.created_at = datetime.now()
-    user.last_login = datetime.now()
+    user.last_login_at = datetime.now()
+    user.password_updated_at = datetime.now()
     db.session.commit()
 
     session['user.id'] = user.id

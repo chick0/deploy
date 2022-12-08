@@ -30,10 +30,15 @@ class User(db.Model):  # type: ignore
 
     created_at = db.Column(
         db.DateTime,
+        nullable=False,
+    )
+
+    last_login_at = db.Column(
+        db.DateTime,
         nullable=True,
     )
 
-    last_login = db.Column(
+    password_updated_at = db.Column(
         db.DateTime,
         nullable=True,
     )

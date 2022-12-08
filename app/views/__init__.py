@@ -5,6 +5,7 @@ __all__ = [
     "auth",
     "index",
     "project",
+    "user",
 ]
 
 from . import *

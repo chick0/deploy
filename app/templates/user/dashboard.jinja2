@@ -1,0 +1,49 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+<div class="section">
+    <div class="container">
+        <h1 class="title is-1 has-text-centered">대시보드</h1>
+
+        <div class="box">
+            <div class="field">
+                <label class="label">이메일</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="email" value="{{ email }}" readonly>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <a class="button is-link is-medium" href="{{ url_for('user.password_update') }}">비밀번호 변경</a>
+                <a class="button is-danger is-medium">계정 삭제</a>
+            </div>
+        </div>
+
+        <div class="box">
+            <h2 class="title is-4">프로젝트 사용률</h2>
+            {% if p_count_per <= 50 %}
+                {% set color = "info" %}
+            {% elif p_count_per <= 70 %}
+                {% set color = "warning" %}
+            {% else %}
+                {% set color = "danger" %}
+            {% endif %}
+            <progress class="progress is-{{ color }}" value="{{ p_count_per }}" max="100">{{ p_count_per }}%</progress>
+        </div>
+
+        <div class="box">
+            <h2 class="title is-4">배포 사용률</h2>
+            {% if d_count_per <= 50 %}
+                {% set color = "info" %}
+            {% elif d_count_per <= 70 %}
+                {% set color = "warning" %}
+            {% else %}
+                {% set color = "danger" %}
+            {% endif %}
+            <progress class="progress is-{{ color }}" value="{{ d_count_per }}" max="100">{{ d_count_per }}%</progress>
+        </div>
+    </div>
+</div>
+{% endblock %}

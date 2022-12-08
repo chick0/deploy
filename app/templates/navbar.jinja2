@@ -17,16 +17,16 @@
                 {% endif %}
 
                 <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
+                    <a class="navbar-link" href="{{ url_for('user.dashboard') }}">
                         계정
                     </a>
 
                     <div class="navbar-dropdown">
-                        <a class="navbar-item">
-                            계정 대시보드
+                        <a class="navbar-item" href="{{ url_for('user.dashboard') }}">
+                            대시보드
                         </a>
-                        <a class="navbar-item">
-                            비밀번호 수정
+                        <a class="navbar-item" href="{{ url_for('user.password_update') }}">
+                            비밀번호 변경
                         </a>
                         {% if admin is true %}
                             <hr class="navbar-divider">

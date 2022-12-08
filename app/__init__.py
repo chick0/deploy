@@ -22,6 +22,9 @@ def create_app():
 
     app.config['SECRET_KEY'] = get_key()
 
+    app.config['PROJECT_MAX'] = 100
+    app.config['DEPLOY_MAX'] = 80
+
     from . import views
     for view in [getattr(views, x) for x in views.__all__]:
         app.register_blueprint(view.bp)
