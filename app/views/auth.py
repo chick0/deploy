@@ -115,6 +115,10 @@ def password_update_post():
         flash("12글자 이상으로 긴 비밀번호를 입력해야합니다.", "password-update")
         return redirect(url_for("auth.password_update"))
 
+    if password != request.form.get("password-check", ""):
+        flash("비밀번호가 일치하지 않습니다. 다시 한 번 확인해주세요.", "password-update")
+        return redirect(url_for("auth.password_update"))
+
     user.password = sha512(password.encode()).hexdigest()
     user.created_at = datetime.now()
     user.last_login = datetime.now()
