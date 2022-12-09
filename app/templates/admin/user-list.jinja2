@@ -1,0 +1,54 @@
+{% extends "layout.jinja2" %}
+{% block head %}
+<style>
+    th, td {
+        word-break: keep-all;
+        white-space: nowrap;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="section">
+    <div class="container">
+        <h1 class="title is-1 has-text-centered">계정 목록</h1>
+        <div class="table-container">
+            <table class="table is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>등록 날짜</th>
+                        <th>마지막 로그인</th>
+                        <th>비밀번호 수정</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in user_list %}
+                        <tr id="user-{{ user.id }}">
+                            <td>{{ user.id }}</td>
+                            <td>
+                                {{ user.email }}
+                                <div class="buttons mt-2">
+                                    <a class="button is-danger">계정 삭제</a>
+                                    <a class="button is-warning" href="javascript:ask_reset('{{ url_for('admin.password_reset', user_id=user.id) }}')">임시 비밀번호 설정</a>
+                                </div>
+                            </td>
+                            <td>{{ user.created_at }}</td>
+                            <td>{{ user.last_login_at }}</td>
+                            <td>{{ user.password_updated_at }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ask_reset(url) {
+        if (confirm("해당 계정의 비밀번호를 삭제하고 임시 비밀번호로 설정하시겠습니까?")) {
+            location.href = url;
+        }
+    }
+</script>
+{% endblock %}

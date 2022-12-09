@@ -30,11 +30,11 @@
                         </a>
                         {% if admin is true %}
                             <hr class="navbar-divider">
-                            <a class="navbar-item">
-                                계정 등록
-                            </a>
-                            <a class="navbar-item">
+                            <a class="navbar-item" href="{{ url_for('admin.user_list') }}">
                                 계정 목록
+                            </a>
+                            <a class="navbar-item" href="{{ url_for('admin.user_add') }}">
+                                계정 등록
                             </a>
                         {% endif %}
                     </div>
