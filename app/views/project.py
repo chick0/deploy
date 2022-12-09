@@ -13,6 +13,7 @@ from flask import render_template
 from .. import db
 from ..models import User
 from ..models import Project
+from ..models import Token
 from ..user import login_required
 
 bp = Blueprint("project", __name__, url_prefix="/project")
@@ -31,9 +32,17 @@ def get_list(user: User):
     if len(project_list) == 0:
         return redirect(url_for("project.create"))
 
+    token_map = {}
+
+    for project_id in [project.id for project in project_list]:
+        token_map[project_id] = Token.query.filter_by(
+            project=project_id
+        ).count()
+
     return render_template(
         "project/get-list.jinja2",
-        project_list=project_list
+        project_list=project_list,
+        token=token_map
     )
 
 

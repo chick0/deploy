@@ -56,16 +56,19 @@
                 </div>
 
                 <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
+                    <a class="navbar-link" href="{{ url_for('token.get_list') }}">
                         배포 토큰
                     </a>
 
                     <div class="navbar-dropdown">
-                        <a class="navbar-item">
+                        <a class="navbar-item" href="{{ url_for('token.get_list') }}">
                             배포 토큰 목록
                         </a>
-                        <a class="navbar-item">
+                        <a class="navbar-item" href="{{ url_for('token.create') }}">
                             배포 토큰 생성
+                        </a>
+                        <a class="navbar-item" href="{{ url_for('token.test') }}">
+                            배포 토큰 테스트
                         </a>
                     </div>
                 </div>

@@ -1,0 +1,83 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+<div class="section">
+    <div class="container">
+        <h1 class="title is-1 has-text-centered">배포 토큰 생성</h1>
+        <div class="columns is-centered">
+            <div class="column is-one-third">
+                {% for message in get_flashed_messages(category_filter=["token-create"]) %}
+                    <div class="message is-danger">
+                        <div class="message-header">
+                            <p>토큰 생성 실패</p>
+                        </div>
+                        <div class="message-body">
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <form class="box" method="post">
+                    <div class="field">
+                        <label class="label">프로젝트</label>
+                        <div class="control has-icons-left">
+                            <div class="select">
+                                <select name="project_id" required>
+                                    <option selected>프로젝트를 선택해주세요.</option>
+                                    {% for project in project_list %}
+                                        <option value="{{ project.id }}">{{ project.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <span class="icon is-left">
+                                <i class="fas fa-file"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox">
+                                배포 토큰 만료날짜 설정하기
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="field is-hidden" id="expired_field">
+                        <label class="label">만료날짜</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="date" placeholder="토큰 만료날짜" id="expired_at">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="field has-text-right">
+                        <div class="control">
+                            <button class="button is-link is-medium" type="submit">다음</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const expired_field = document.getElementById("expired_field");
+    const expired_at = document.getElementById("expired_at");
+
+    document.querySelector("input[type=checkbox]").addEventListener("change", (event) => {
+        if (event.currentTarget.checked) {
+            expired_field.classList.remove("is-hidden");
+            expired_at.name = "expired_at";
+            expired_at.required = true;
+        } else {
+            expired_field.classList.add("is-hidden");
+            expired_at.name = "-";
+            expired_at.required = false;
+        }
+    });
+</script>
+{% endblock %}

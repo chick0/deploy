@@ -33,4 +33,7 @@ def create_app():
     from .error import handle_redirect_required
     app.register_error_handler(RedirectRequired, handle_redirect_required)
 
+    from . import tools
+    app.add_template_filter(tools.get_project_name)
+
     return app

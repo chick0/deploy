@@ -1,0 +1,40 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+<div class="section">
+    <div class="container">
+        <h1 class="title is-1 has-text-centered">배포 토큰 목록</h1>
+        <div class="buttons is-centered">
+            <a class="button is-link is-medium" href="{{ url_for('token.create') }}">토큰 생성</a>
+            <a class="button is-link is-medium" href="{{ url_for('token.test') }}">토큰 테스트</a>
+        </div>
+
+        {% for token in token_list %}
+            <div class="box" id="token-{{ token.id }}">
+                <div class="content is-medium">
+                    <p>생성 날짜 : <b>{{ token.created_at }}</b></p>
+
+                    <p>연결된 프로젝트: <b>{{ token.project|get_project_name }}</b></p>
+
+                    {% if token.expired_at is none %}
+                        <p>해당 토큰은 만료되지 않습니다.</p>
+                    {% else %}
+                        <p>만료 날짜 : <b>{{ token.expired_at }}</b></p>
+                    {% endif %}
+
+                    {% if token.last_used_at is none%}
+                        <p>해당 토큰은 사용된적이 없습니다.</p>
+                    {% else %}
+                        <p>마지막 사용날짜: <b>{{ token.last_used_at }}</b></p>
+                    {% endif %}
+                </div>
+                <hr>
+                <div class="buttons">
+                    <button class="button is-danger tk-delete" data-token="{{ token.id }}">배포 토큰 삭제</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='token-list.js') }}"></script>
+{% endblock %}

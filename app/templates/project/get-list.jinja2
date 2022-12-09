@@ -3,6 +3,11 @@
 <div class="section">
     <div class="container">
         <h1 class="title is-1 has-text-centered">프로젝트 목록</h1>
+        <div class="buttons is-centered">
+            <a class="button is-link is-medium" href="{{ url_for('project.create') }}">프로젝트 생성</a>
+            <a class="button is-link is-medium" href="{{ url_for('token.create') }}">토큰 생성</a>
+        </div>
+
         {% for project in project_list %}
             <div id="project-{{ project.id }}" class="box">
                 <h2 class="title is-4">{{ project.name }}</h2>
@@ -13,9 +18,17 @@
                     {% else %}
                         <p><span class="tag is-success is-medium">배포</span> {{ project.last_deploy }}</p>
                     {% endif %}
+                    {% if token[project.id] == 0 %}
+                        <p><span class="tag is-danger is-medium">토큰</span> 배포 토큰이 없습니다!</p>
+                    {% else %}
+                        <p><span class="tag is-success is-medium">토큰</span> <b>{{ token[project.id] }}개</b>의 배포 토큰이 등록되어있습니다.</p>
+                    {% endif %}
                 </div>
                 <hr>
-                <button class="button is-link is-medium is-fullwidth dp-more" data-project="{{ project.id }}">프로젝트 자세히 보기</button>
+                <div class="buttons">
+                    <button class="button is-link is-medium dp-more" data-project="{{ project.id }}">프로젝트 자세히 보기</button>
+                    <button class="button is-danger is-medium dp-delete" data-project="{{ project.id }}">프로젝트 삭제</button>
+                </div>
             </div>
         {% endfor %}
     </div>
