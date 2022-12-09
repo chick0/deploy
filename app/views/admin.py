@@ -99,6 +99,7 @@ def password_reset(user_id: int, user: User):
 
     return render_template(
         "admin/password-reset.jinja2",
+        user_id=target.id,
         email=target.email,
         password=password
     )

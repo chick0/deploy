@@ -31,7 +31,7 @@ def dashboard(user: User):
 
     return render_template(
         "user/dashboard.jinja2",
-        email=user.email,
+        user=user,
         p_count_per=int(p_count / app.config['PROJECT_MAX'] * 100),
         d_count_per=int(d_count / app.config['DEPLOY_MAX'] * 100)
     )
