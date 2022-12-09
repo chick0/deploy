@@ -18,7 +18,7 @@ from ..user import login_required
 bp = Blueprint("project", __name__, url_prefix="/project")
 logger = getLogger()
 
-RE = compile(r"^[a-z0-9.-_]+$")
+RE = compile(r"^[a-z0-9-._]+$")
 
 
 @bp.get("/list")
