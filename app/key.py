@@ -14,8 +14,7 @@ def get_key() -> bytes:
         with open(PATH, mode="rb") as reader:
             key = reader.read()
 
-            if len(key) < KEY_SIZE:
-                print("KEY_SIZE_ERROR")
+            if len(key) != KEY_SIZE:
                 raise KeySizeError
 
             return key
