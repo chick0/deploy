@@ -27,6 +27,9 @@
                 </div>
                 <hr>
                 <div class="buttons">
+                    {% if token[project.id] == 0 %}
+                        <a class="button is-link is-medium" href="{{ url_for('token.create', project_id=project.id) }}">배포 토큰 생성</a>
+                    {% endif %}
                     <button class="button is-link is-medium dp-more" data-project="{{ project.id }}">프로젝트 자세히 보기</button>
                     <button class="button is-danger is-medium dp-delete" data-project="{{ project.id }}">프로젝트 삭제</button>
                 </div>

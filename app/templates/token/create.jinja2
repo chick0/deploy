@@ -22,9 +22,14 @@
                         <div class="control has-icons-left">
                             <div class="select">
                                 <select name="project_id" required>
-                                    <option selected>프로젝트를 선택해주세요.</option>
+                                    {% if project_id is none %}
+                                        <option selected>프로젝트를 선택해주세요.</option>
+                                    {% endif %}
                                     {% for project in project_list %}
-                                        <option value="{{ project.id }}">{{ project.name }}</option>
+                                        {% if project_id == project.id %}
+                                            {% set selected = "selected" %}
+                                        {% endif %}
+                                        <option value="{{ project.id }}" {{ selected }}>{{ project.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>

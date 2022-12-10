@@ -50,8 +50,14 @@ def create(user: User):
         flash("배포 토큰을 생성하려면 먼저 프로젝트를 생성해야합니다.")
         return redirect(url_for("project.create"))
 
+    try:
+        project_id = int(request.args.get("project_id", ""))
+    except ValueError:
+        project_id = None
+
     return render_template(
         "token/create.jinja2",
+        project_id=project_id,
         project_list=project_list
     )
 
