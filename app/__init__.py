@@ -29,10 +29,6 @@ def create_app():
     for view in [getattr(views, x) for x in views.__all__]:
         app.register_blueprint(view.bp)
 
-    from .error import RedirectRequired
-    from .error import handle_redirect_required
-    app.register_error_handler(RedirectRequired, handle_redirect_required)
-
     from . import tools
     app.add_template_filter(tools.get_project_name)
     app.add_template_filter(tools.get_user_email)
