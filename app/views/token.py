@@ -78,9 +78,9 @@ def create_post(user: User):
         return redirect(url_for("token.create"))
 
     if expired_at is None:
-        token_length = 128
+        token_length = 48  # 96
     else:
-        token_length = 64
+        token_length = 32  # 32
 
     token = token_bytes(token_length).hex()
 

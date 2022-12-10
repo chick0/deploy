@@ -115,7 +115,7 @@ class Token(db.Model):  # type: ignore
     )
 
     token = db.Column(
-        db.String(256),
+        db.String(100),
         nullable=False,
     )
 
