@@ -17,12 +17,12 @@ function on_click(element) {
         .then((resp) => resp.json())
         .then((json) => {
             if (json.status == false) {
-                alert(json.message);
                 element.classList.remove("is-loading");
             } else {
-                alert(json.message);
                 document.getElementById(`token-${token_id}`).remove();
             }
+
+            alert(json.message);
         }).catch(() => {
             alert("배포 토큰을 삭제하는 과정에서 알 수 없는 오류가 발생했습니다.");
             element.classList.remove("is-loading");
