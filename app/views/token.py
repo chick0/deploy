@@ -20,9 +20,12 @@ bp = Blueprint("token", __name__, url_prefix="/token")
 @bp.get("/list")
 @login_required
 def get_list(user: User):
-    token_list: list[Token] = Token.query.filter_by(
-        owner=user.id
-    ).all()
+    if user.id == 1:
+        token_list: list[Token] = Token.query.all()
+    else:
+        token_list: list[Token] = Token.query.filter_by(
+            owner=user.id
+        ).all()
 
     if len(token_list) == 0:
         return redirect(url_for("token.create"))
@@ -36,9 +39,16 @@ def get_list(user: User):
 @bp.get("/create")
 @login_required
 def create(user: User):
-    project_list: list[Project] = Project.query.filter_by(
-        owner=user.id
-    ).all()
+    if user.id == 1:
+        project_list: list[Project] = Project.query.all()
+    else:
+        project_list: list[Project] = Project.query.filter_by(
+            owner=user.id
+        ).all()
+
+    if len(project_list) == 0:
+        flash("배포 토큰을 생성하려면 먼저 프로젝트를 생성해야합니다.")
+        return redirect(url_for("project.create"))
 
     return render_template(
         "token/create.jinja2",
@@ -55,9 +65,11 @@ def create_post(user: User):
         flash("프로젝트 아이디가 올바르지 않습니다.", "token-create")
         return redirect(url_for("token.create"))
 
-    expired_at = request.form.get("expired_at", None)
+    expired_at = request.form.get("expired_at", "")
 
-    if expired_at is not None:
+    if len(expired_at) == 0:
+        expired_at = None
+    else:
         try:
             expired_at = datetime.strptime(expired_at, "%Y-%m-%d")
         except ValueError:

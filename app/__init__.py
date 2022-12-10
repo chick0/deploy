@@ -35,5 +35,6 @@ def create_app():
 
     from . import tools
     app.add_template_filter(tools.get_project_name)
+    app.add_template_filter(tools.get_user_email)
 
     return app

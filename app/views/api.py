@@ -26,10 +26,15 @@ def resp(status: bool = True, message: Optional[str] = None, payload: dict = {})
 @bp.get("/project/<int:project_id>")
 @login_required
 def project_detail(project_id: int, user: User):
-    project = Project.query.filter_by(
-        id=project_id,
-        owner=user.id
-    ).first()
+    if user.id == 1:
+        project = Project.query.filter_by(
+            id=project_id
+        ).first()
+    else:
+        project = Project.query.filter_by(
+            id=project_id,
+            owner=user.id
+        ).first()
 
     if project is None:
         return resp(
@@ -38,19 +43,18 @@ def project_detail(project_id: int, user: User):
         )
 
     token_list: list[Token] = Token.query.filter_by(
-        owner=user.id,
         project=project.id
     ).all()
 
     deploy_list: list[Deploy] = Deploy.query.filter_by(
-        owner=user.id,
-        project=project.id,
+        project=project.id
     ).all()
 
     return resp(
         payload={
             "token_list": [
                 {
+                    "owner": x.owner,
                     "created_at": x.created_at.timestamp(),
                     "expired_at": x.expired_at.timestamp(),
                     "last_used_at": x.last_used_at.timestamp()
@@ -59,6 +63,7 @@ def project_detail(project_id: int, user: User):
             ],
             "deploy_list": [
                 {
+                    "owner": x.owner,
                     "created_at": x.created_at.timestamp(),
                 }
                 for x in deploy_list

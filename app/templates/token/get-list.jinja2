@@ -26,6 +26,10 @@
                     {% else %}
                         <p>마지막 사용날짜: <b>{{ token.last_used_at }}</b></p>
                     {% endif %}
+
+                    {% if session['user.id'] == 1 %}
+                        <p>생성자: <b>{{ token.owner|get_user_email }}</b></p>
+                    {% endif %}
                 </div>
                 <hr>
                 <div class="buttons">

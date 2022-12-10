@@ -25,11 +25,15 @@ RE = compile(r"^[a-z0-9-._]+$")
 @bp.get("/list")
 @login_required
 def get_list(user: User):
-    project_list = Project.query.filter_by(
-        owner=user.id
-    ).all()
+    if user.id == 1:
+        project_list = Project.query.all()
+    else:
+        project_list = Project.query.filter_by(
+            owner=user.id
+        ).all()
 
     if len(project_list) == 0:
+        flash("등록된 프로젝트가 없습니다.")
         return redirect(url_for("project.create"))
 
     token_map = {}

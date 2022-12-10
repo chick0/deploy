@@ -11,6 +11,7 @@
         {% for project in project_list %}
             <div id="project-{{ project.id }}" class="box">
                 <h2 class="title is-4">{{ project.name }}</h2>
+                <p class="subtitle">{{ project.owner|get_user_email }}</p>
                 <div class="content is-medium">
                     <p><span class="tag is-success is-medium">생성</span> {{ project.created_at }}</p>
                     {% if project.last_deploy is none%}

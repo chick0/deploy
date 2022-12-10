@@ -1,5 +1,6 @@
 from flask import g
 
+from .models import User
 from .models import Project
 
 
@@ -15,7 +16,7 @@ def set_g_cache(key: str, value) -> None:
 
 
 def get_project_name(project_id: int) -> str:
-    key = f"project-name:{project_id}"
+    key = f"project.name:{project_id}"
     name = get_g_cache(key)
 
     if name is None:
@@ -32,3 +33,20 @@ def get_project_name(project_id: int) -> str:
         set_g_cache(key, name)
 
     return name
+
+
+def get_user_email(user_id: int) -> str:
+    key = f"user.email:{user_id}"
+    email = get_g_cache(key)
+
+    if email is None:
+        user: User = User.query.with_entities(
+            User.email
+        ).filter_by(
+            id=user_id
+        ).first()
+
+        email = user.email
+        set_g_cache(key, email)
+
+    return email
