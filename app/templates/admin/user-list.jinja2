@@ -33,6 +33,7 @@
 
                                 {{ user.email }}
                                 <div class="buttons mt-2">
+                                    {# TODO #}
                                     <a class="button is-danger">계정 삭제</a>
                                     <a class="button is-warning" href="javascript:ask_reset('{{ url_for('admin.password_reset', user_id=user.id) }}')">임시 비밀번호 설정</a>
                                 </div>

@@ -19,6 +19,7 @@ function on_click(element) {
                 element.classList.remove("is-loading");
             } else {
                 const payload = json.payload;
+                // TODO
                 console.log(payload);
             }
         }).catch(() => {
