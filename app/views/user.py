@@ -1,4 +1,5 @@
 from hashlib import sha512
+from logging import getLogger
 from datetime import datetime
 
 from flask import Blueprint
@@ -14,8 +15,10 @@ from ..models import User
 from ..models import Project
 from ..models import Deploy
 from ..user import login_required
+from ..utils import get_from
 
 bp = Blueprint("user", __name__, url_prefix="/user")
+logger = getLogger()
 
 
 @bp.get("/dashboard")
@@ -73,5 +76,7 @@ def password_update_post(user: User):
     user.password = new_password
     user.password_updated_at = datetime.now()
     db.session.commit()
+
+    logger.info(f"User update password {user.email!r} from {get_from()}")
 
     return redirect(url_for("user.dashboard"))

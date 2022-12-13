@@ -1,4 +1,5 @@
 from hashlib import sha512
+from logging import getLogger
 from secrets import token_bytes
 from datetime import datetime
 
@@ -12,8 +13,10 @@ from flask import render_template
 from .. import db
 from ..models import User
 from ..user import login_required
+from ..utils import get_from
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
+logger = getLogger()
 
 
 @bp.get("/user-list")
@@ -72,6 +75,8 @@ def user_add_post(user: User):
     db.session.add(new_user)
     db.session.commit()
 
+    logger.info(f"User added {new_user.email!r} from {get_from()}")
+
     return render_template(
         "admin/user-add-post.jinja2",
         email=email,
@@ -96,6 +101,8 @@ def password_reset(user_id: int, user: User):
     target.password_updated_at = None
 
     db.session.commit()
+
+    logger.info(f"Password reset {target.email!r} from {get_from()}")
 
     return render_template(
         "admin/password-reset.jinja2",

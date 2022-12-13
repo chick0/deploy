@@ -1,4 +1,5 @@
 from secrets import token_bytes
+from logging import getLogger
 from datetime import datetime
 
 from flask import Blueprint
@@ -13,8 +14,10 @@ from ..models import User
 from ..models import Project
 from ..models import Token
 from ..user import login_required
+from ..utils import get_from
 
 bp = Blueprint("token", __name__, url_prefix="/token")
+logger = getLogger()
 
 
 @bp.get("/list")
@@ -112,6 +115,8 @@ def create_post(user: User):
 
     db.session.add(tk)
     db.session.commit()
+
+    logger.info(f"Deploy token created id={tk.id} from {get_from()}")
 
     return render_template(
         "token/create-post.jinja2",

@@ -1,4 +1,5 @@
 from typing import Optional
+from logging import getLogger
 
 from flask import Blueprint
 from flask import request
@@ -10,8 +11,10 @@ from ..models import Token
 from ..models import Deploy
 from ..user import login_required
 from .project import RE
+from ..utils import get_from
 
 bp = Blueprint("api", __name__, url_prefix="/api")
+logger = getLogger()
 
 
 def resp(status: bool = True, message: Optional[str] = None, payload: dict = {}) -> tuple[dict, int]:
@@ -94,6 +97,8 @@ def delete_token(token_id: int, user: User):
 
     db.session.delete(token)
     db.session.commit()
+
+    logger.info(f"Deploy token is deleted id={token.id} by {user.email!r} from {get_from()}")
 
     return resp(
         message="배포 토큰이 삭제되었습니다."

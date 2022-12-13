@@ -15,6 +15,7 @@ from ..models import User
 from ..models import Project
 from ..models import Token
 from ..user import login_required
+from ..utils import get_from
 
 bp = Blueprint("project", __name__, url_prefix="/project")
 logger = getLogger()
@@ -105,5 +106,7 @@ def create_post(user: User):
 
     db.session.add(project)
     db.session.commit()
+
+    logger.info(f"Project created id={project.id} from {get_from()}")
 
     return redirect(url_for("project.get_list") + f"#project-{project.id}")

@@ -12,8 +12,8 @@ from flask import flash
 
 from .. import db
 from ..models import User
-from ..utils import get_from
 from ..user import login_not_required
+from ..utils import get_from
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 logger = getLogger()
@@ -72,11 +72,12 @@ def login_post():
         session['tmp+user.email'] = user.email
         return redirect(url_for("auth.password_update"))
 
-    session['user.id'] = user.id
-    session['user.password'] = user.password
-
     user.last_login_at = datetime.now()
     db.session.commit()
+
+    session['user.id'] = user.id
+    session['user.password'] = user.password
+    logger.info(f"User login {user.email!r} from {get_from()}")
 
     return redirect(url_for("project.get_list"))
 
@@ -123,6 +124,8 @@ def password_update_post():
     user.last_login_at = datetime.now()
     user.password_updated_at = datetime.now()
     db.session.commit()
+
+    logger.info(f"User update *temp* password {user.email!r} from {get_from()}")
 
     session['user.id'] = user.id
     session['user.password'] = user.password
