@@ -1,5 +1,4 @@
 from typing import Optional
-from datetime import datetime
 
 from flask import Blueprint
 from flask import request
@@ -147,9 +146,6 @@ def token_test():
             status=False,
             message="등록된 배포 토큰이 아닙니다."
         )
-
-    tk.last_used_at = datetime.now()
-    db.session.commit()
 
     return resp(
         message="배포 토큰 테스트에 성공했습니다!"
