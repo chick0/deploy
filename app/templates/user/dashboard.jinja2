@@ -70,10 +70,8 @@
                 {% set color = "danger" %}
             {% endif %}
             <progress class="progress is-{{ color }}" value="{{ p_count_per }}" max="100">{{ p_count_per }}%</progress>
-
             <hr>
-
-            <h2 class="title is-5 mb-3">배포 사용률</h2>
+            <h2 class="title is-5 mb-3">버전 사용률</h2>
             {% if d_count_per <= 50 %}
                 {% set color = "info" %}
             {% elif d_count_per <= 70 %}
@@ -82,6 +80,10 @@
                 {% set color = "danger" %}
             {% endif %}
             <progress class="progress is-{{ color }}" value="{{ d_count_per }}" max="100">{{ d_count_per }}%</progress>
+            <hr>
+            <div class="buttons">
+                <a class="button is-danger is-medium" href="{{ url_for('user.clean_up') }}">미사용 버전 삭제</a>
+            </div>
         </div>
     </div>
 </div>

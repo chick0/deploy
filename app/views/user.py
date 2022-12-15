@@ -1,4 +1,5 @@
 from os import stat
+from os import remove
 from os import listdir
 from os.path import join
 from hashlib import sha512
@@ -19,8 +20,11 @@ from ..models import Project
 from ..models import Deploy
 from ..user import login_required
 from ..utils import get_from
+from ..tools import get_g_cache
+from ..tools import set_g_cache
 from deploy import UPLOAD_DIR
 from deploy import create_dir
+from deploy.path import upload_path_with_deploy_id
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 logger = getLogger()
@@ -92,4 +96,41 @@ def password_update_post(user: User):
 
     logger.info(f"({user.id}) {user.email} user update password from {get_from()}")
 
+    return redirect(url_for("user.dashboard"))
+
+
+@bp.get("/clean-up")
+@login_required
+def clean_up(user: User):
+    count = 0
+
+    for deploy in Deploy.query.filter_by(
+        owner=user.id,
+    ).all():
+        key = f"project.{deploy.project}.last_deploy"
+        using_id = get_g_cache(key)
+
+        if using_id is None:
+            project: Project = Project.query.with_entities(
+                Project.last_deploy,
+            ).filter_by(
+                id=deploy.project,
+            ).first()
+
+            using_id = project.last_deploy
+            set_g_cache(key, using_id)
+
+        if deploy.id != using_id:
+            try:
+                remove(upload_path_with_deploy_id(user.id, deploy.id))
+            except FileNotFoundError:
+                pass
+            finally:
+                count += 1
+                logger.info(f"Deploy id {deploy.id} is deleted by {user.id} from {get_from()}")
+                db.session.delete(deploy)
+
+    db.session.commit()
+
+    flash(f"<b>{count}개</b>의 미사용 버전이 삭제되었습니다.", "success")
     return redirect(url_for("user.dashboard"))
