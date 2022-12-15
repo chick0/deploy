@@ -1,5 +1,5 @@
 /**
- * @param {HTMLElement} element 
+ * @param {HTMLElement} element
  */
 function on_click(element) {
     if (element.classList.contains("is-loading")) {
@@ -12,7 +12,7 @@ function on_click(element) {
     const token_id = element.dataset.token;
 
     fetch(`/api/token/${token_id}`, {
-        method: "DELETE"
+        method: "DELETE",
     })
         .then((resp) => resp.json())
         .then((json) => {
@@ -23,13 +23,14 @@ function on_click(element) {
             }
 
             alert(json.message);
-        }).catch(() => {
+        })
+        .catch(() => {
             alert("배포 토큰을 삭제하는 과정에서 알 수 없는 오류가 발생했습니다.");
             element.classList.remove("is-loading");
         });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("button.tk-delete").forEach((element) => {
         element.addEventListener("click", (event) => {
             if (confirm("해당 배포 토큰을 삭제하시겠습니까?")) {

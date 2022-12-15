@@ -57,7 +57,7 @@ function on_click(element) {
                     display.appendChild(box);
 
                     const content = document.createElement("div");
-                    content.classList.add("content", "is-medium")
+                    content.classList.add("content", "is-medium");
 
                     const title = document.createElement("h5");
                     title.classList.add("title", "is-5");
@@ -127,14 +127,14 @@ function on_click(element) {
                     remove.dataset.id = deploy.id;
                     remove.innerText = "버전 삭제하기";
                     remove.addEventListener("click", (event) => {
-                        if (event.currentTarget.classList.contains("is-loading")){
+                        if (event.currentTarget.classList.contains("is-loading")) {
                             return;
                         }
 
                         if (confirm("해당 버전을 삭제하시겠습니까?")) {
                             loading_toggle();
                             fetch(`/api/deploy/${deploy.id}`, {
-                                method: "DELETE"
+                                method: "DELETE",
                             })
                                 .then((resp) => resp.json())
                                 .then((json) => {
@@ -159,14 +159,14 @@ function on_click(element) {
                     apply.dataset.id = deploy.id;
                     apply.innerText = "버전 적용하기";
                     apply.addEventListener("click", (event) => {
-                        if (event.currentTarget.classList.contains("is-loading")){
+                        if (event.currentTarget.classList.contains("is-loading")) {
                             return;
                         }
 
                         if (confirm("해당 버전을 적용하시겠습니까?")) {
                             loading_toggle();
                             fetch(`/api/deploy/${deploy.id}`, {
-                                method: "POST"
+                                method: "POST",
                             })
                                 .then((resp) => resp.json())
                                 .then((json) => {
@@ -176,7 +176,7 @@ function on_click(element) {
                                 .catch(() => {
                                     alert("버전을 적용하는 과정에서 알 수 없는 오류가 발생했습니다.");
                                     loading_toggle();
-                                })
+                                });
                         }
                     });
 
@@ -189,13 +189,14 @@ function on_click(element) {
 
                 element.classList.remove("is-loading");
             }
-        }).catch(() => {
+        })
+        .catch(() => {
             alert("프로젝트 정보를 불러오는 과정에서 알 수 없는 오류가 발생했습니다.");
             element.classList.remove("is-loading");
         });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("button.dp-more").forEach((element) => {
         element.addEventListener("click", (event) => {
             on_click(event.currentTarget);
