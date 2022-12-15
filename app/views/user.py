@@ -2,6 +2,7 @@ from os import stat
 from os import remove
 from os import listdir
 from os.path import join
+from shutil import rmtree
 from hashlib import sha512
 from logging import getLogger
 from datetime import datetime
@@ -17,6 +18,7 @@ from flask import url_for
 from .. import db
 from ..models import User
 from ..models import Project
+from ..models import Token
 from ..models import Deploy
 from ..user import login_required
 from ..utils import get_from
@@ -25,6 +27,7 @@ from ..tools import set_g_cache
 from deploy import UPLOAD_DIR
 from deploy import create_dir
 from deploy.path import upload_path_with_deploy_id
+from deploy.path import project_path_with_name
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 logger = getLogger()
@@ -134,3 +137,130 @@ def clean_up(user: User):
 
     flash(f"<b>{count}개</b>의 미사용 버전이 삭제되었습니다.", "success")
     return redirect(url_for("user.dashboard"))
+
+
+@bp.get("/delete")
+@login_required
+def delete(user: User):
+    if user.id == 1:
+        try:
+            user_id = int(request.args.get("user_id", "a"))
+
+            user = User.query.filter_by(
+                id=user_id
+            ).first()
+
+            if user is None:
+                flash("등록된 계정이 아닙니다.")
+                return redirect(url_for("user.dashboard"))
+        except ValueError:
+            pass
+
+    if user.id == 1:
+        flash("관리자 계정은 삭제할 수 없습니다.")
+        return redirect(url_for("user.dashboard"))
+
+    delete_list = []
+    delete_list.append(f"<b>{user.email}</b> 계정")
+
+    token_c = Token.query.filter_by(
+        owner=user.id
+    ).count()
+
+    if token_c != 0:
+        delete_list.append(f"<b>{token_c}개+</b>의 배포 토큰")
+
+    deploy_c = Deploy.query.filter_by(
+        owner=user.id
+    ).count()
+
+    if deploy_c != 0:
+        delete_list.append(f"<b>{deploy_c}개+</b>의 배포 버전")
+
+    project_list: list[Project] = Project.query.filter_by(
+        owner=user.id
+    ).all()
+
+    for project in project_list:
+        delete_list.append(f"<b>{project.name}</b> 프로젝트")
+
+    return render_template(
+        "user/delete.jinja2",
+        delete_list=delete_list
+    )
+
+
+@bp.post("/delete")
+@login_required
+def delete_post(user: User):
+    if user.id == 1:
+        try:
+            user_id = int(request.args.get("user_id", "a"))
+
+            user = User.query.filter_by(
+                id=user_id
+            ).first()
+
+            if user is None:
+                flash("등록된 계정이 아닙니다.")
+                return redirect(url_for("user.dashboard"))
+        except ValueError:
+            pass
+
+    if user.id == 1:
+        flash("관리자 계정은 삭제할 수 없습니다.")
+        return redirect(url_for("user.dashboard"))
+
+    for token in Token.query.filter_by(
+        owner=user.id
+    ).all():
+        db.session.delete(token)
+
+    for deploy in Deploy.query.filter_by(
+        owner=user.id
+    ).all():
+        db.session.delete(deploy)
+
+    try:
+        rmtree(join(UPLOAD_DIR, str(user.id)))
+    except FileNotFoundError:
+        pass
+
+    for project in Project.query.filter_by(
+        owner=user.id
+    ).all():
+        for token in Token.query.filter_by(
+            project=project.id
+        ).all():
+            db.session.delete(token)
+
+        for deploy in Deploy.query.filter_by(
+            project=project.id
+        ).all():
+            try:
+                remove(upload_path_with_deploy_id(deploy.owner, deploy.id))
+            except FileNotFoundError:
+                pass
+
+            db.session.delete(deploy)
+
+        try:
+            rmtree(project_path_with_name(project.name))
+        except FileNotFoundError:
+            pass
+
+        db.session.delete(project)
+
+    db.session.delete(user)
+    db.session.commit()
+
+    if user.id == 1:
+        logger.info(f"User id {user.id} is deleted by admin from {get_from()}")
+
+        flash("계정이 삭제되었습니다.", "success")
+        return redirect(url_for("admin.user_list"))
+    else:
+        logger.info(f"User id {user.id} is deleted from {get_from()}")
+
+        flash("계정이 삭제되었습니다.", "success")
+        return redirect(url_for("auth.logout"))
