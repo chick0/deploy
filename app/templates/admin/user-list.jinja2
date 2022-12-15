@@ -35,7 +35,7 @@
                                 <div class="buttons mt-2">
                                     {# TODO #}
                                     <a class="button is-danger">계정 삭제</a>
-                                    <a class="button is-warning" href="javascript:ask_reset('{{ url_for('admin.password_reset', user_id=user.id) }}')">임시 비밀번호 설정</a>
+                                    <button class="button is-warning ask-reset" data-href="{{ url_for('admin.password_reset', user_id=user.id) }}">임시 비밀번호 설정</button>
                                 </div>
                             </td>
                             <td>{{ user.created_at }}</td>
@@ -49,11 +49,5 @@
     </div>
 </div>
 
-<script>
-    function ask_reset(url) {
-        if (confirm("해당 계정의 비밀번호를 삭제하고 임시 비밀번호로 설정하시겠습니까?")) {
-            location.href = url;
-        }
-    }
-</script>
+<script src="{{ url_for('static', filename='ask-reset.js') }}"></script>
 {% endblock %}
