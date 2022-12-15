@@ -79,10 +79,6 @@
             <div class="navbar-item">
                 <div class="buttons">
                     {% if session['user.id'] %}
-                        {# TODO #}
-                        <a class="button is-primary">
-                            쪽지
-                        </a>
                         <a class="button is-light" href="{{ url_for('auth.logout') }}">
                             로그아웃
                         </a>
