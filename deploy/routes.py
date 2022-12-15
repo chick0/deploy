@@ -1,4 +1,3 @@
-from os import stat
 from os import remove
 from logging import getLogger
 from datetime import datetime
@@ -80,12 +79,6 @@ def upload(project: Project, token: Token):
 
     return response(
         message="파일 업로드가 완료되었습니다.",
-        payload={
-            "debug": {
-                "filename": file.filename,
-                "size": stat(path.path).st_size
-            }
-        }
     )
 
 
