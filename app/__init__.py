@@ -33,5 +33,6 @@ def create_app():
     app.add_template_filter(tools.get_project_name)
     app.add_template_filter(tools.get_user_email)
     app.add_template_filter(tools.get_deploy_created_at)
+    app.add_template_filter(tools.size2str)
 
     return app

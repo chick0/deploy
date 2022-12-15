@@ -1,3 +1,6 @@
+from os import stat
+from os import listdir
+from os.path import join
 from hashlib import sha512
 from logging import getLogger
 from datetime import datetime
@@ -16,6 +19,8 @@ from ..models import Project
 from ..models import Deploy
 from ..user import login_required
 from ..utils import get_from
+from deploy import UPLOAD_DIR
+from deploy import create_dir
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 logger = getLogger()
@@ -32,9 +37,17 @@ def dashboard(user: User):
         owner=user.id
     ).count()
 
+    PATH: str = join(UPLOAD_DIR, str(user.id))
+    create_dir(PATH)
+
+    using_size = 0
+    for file in listdir(PATH):
+        using_size += stat(join(PATH, file)).st_size
+
     return render_template(
         "user/dashboard.jinja2",
         user=user,
+        using_size=using_size,
         p_count_per=int(p_count / app.config['PROJECT_MAX'] * 100),
         d_count_per=int(d_count / app.config['DEPLOY_MAX'] * 100)
     )
