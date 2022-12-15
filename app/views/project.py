@@ -1,4 +1,6 @@
+from os import remove
 from re import compile
+from shutil import rmtree
 from logging import getLogger
 from datetime import datetime
 
@@ -14,8 +16,11 @@ from .. import db
 from ..models import User
 from ..models import Project
 from ..models import Token
+from ..models import Deploy
 from ..user import login_required
 from ..utils import get_from
+from deploy.path import upload_path_with_deploy_id
+from deploy.path import project_path_with_name
 
 bp = Blueprint("project", __name__, url_prefix="/project")
 logger = getLogger()
@@ -110,3 +115,92 @@ def create_post(user: User):
     logger.info(f"Project created id={project.id} from {get_from()}")
 
     return redirect(url_for("project.get_list") + f"#project-{project.id}")
+
+
+@bp.get("/delete/<int:project_id>")
+@login_required
+def delete(user: User, project_id: int):
+    project: Project = Project.query.with_entities(
+        Project.name,
+        Project.owner
+    ).filter_by(
+        id=project_id
+    ).first()
+
+    if project is None:
+        flash("등록된 프로젝트가 아닙니다.")
+        return redirect(url_for("project.get_list"))
+
+    if user.id == 1:
+        pass
+    elif user.id != project.owner:
+        flash("해당 프로젝트를 삭제할 권한이 없습니다.")
+        return redirect(url_for("project.get_list"))
+
+    delete_list = []
+    delete_list.append(f"<b>{project.name}</b> 프로젝트")
+
+    token_c = Token.query.filter_by(
+        project=project_id
+    ).count()
+
+    if token_c != 0:
+        delete_list.append(f"<b>{token_c}개</b>의 배포 토큰")
+
+    deploy_c = Deploy.query.filter_by(
+        project=project_id
+    ).count()
+
+    if deploy_c != 0:
+        delete_list.append(f"<b>{deploy_c}개</b>의 배포 버전")
+
+    return render_template(
+        "project/delete.jinja2",
+        delete_list=delete_list
+    )
+
+
+@bp.post("/delete/<int:project_id>")
+@login_required
+def delete_post(user: User, project_id: int):
+    project: Project = Project.query.filter_by(
+        id=project_id
+    ).first()
+
+    if project is None:
+        flash("등록된 프로젝트가 아닙니다.")
+        return redirect(url_for("project.get_list"))
+
+    if user.id == 1:
+        pass
+    elif user.id != project.owner:
+        flash("해당 프로젝트를 삭제할 권한이 없습니다.")
+        return redirect(url_for("project.get_list"))
+
+    token_d = Token.query.filter_by(
+        project=project.id
+    ).delete()
+
+    deploy_list: list[Deploy] = Deploy.query.filter_by(
+        project=project.id
+    ).all()
+
+    for deploy in deploy_list:
+        try:
+            remove(upload_path_with_deploy_id(deploy.owner, deploy.id))
+        except FileNotFoundError:
+            pass
+
+        db.session.delete(deploy)
+
+    try:
+        rmtree(project_path_with_name(project.name))
+    except FileNotFoundError:
+        pass
+
+    db.session.delete(project)
+    db.session.commit()
+
+    logger.info(f"{project.name!r} project is deleted (token: {token_d}, deploy: {len(deploy_list)}) from {get_from()}")
+    flash(f"<b>{project.name}</b> 프로젝트가 삭제되었습니다.", "success")
+    return redirect(url_for("project.get_list"))

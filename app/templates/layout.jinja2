@@ -16,7 +16,15 @@
         {% for message in get_flashed_messages(category_filter=["message"]) %}
             <div class="container">
                 <div class="notification is-danger">
-                    {{ message }}
+                    {{ message|safe }}
+                </div>
+            </div>
+        {% endfor %}
+
+        {% for message in get_flashed_messages(category_filter=["success"]) %}
+            <div class="container">
+                <div class="notification is-success">
+                    {{ message|safe }}
                 </div>
             </div>
         {% endfor %}
