@@ -146,3 +146,13 @@ class Deploy(db.Model):  # type: ignore
         db.DateTime,
         nullable=False,
     )
+
+    is_success = db.Column(
+        db.Boolean,
+        nullable=True
+    )
+
+    message = db.Column(
+        db.Text,
+        nullable=True,
+    )

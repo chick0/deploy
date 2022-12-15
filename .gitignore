@@ -1,4 +1,7 @@
 .env
 .key
 __pycache__/
-venv/
+/venv/
+/project/
+/unzip/
+/upload/

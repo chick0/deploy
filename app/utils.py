@@ -1,3 +1,4 @@
+from typing import Optional
 from typing import NamedTuple
 
 from flask import request
@@ -24,3 +25,11 @@ def get_user_agent() -> str:
 
 def get_from() -> str:
     return f"({get_ip()!r}, {get_user_agent()!r})"
+
+
+def response(status: bool = True, message: Optional[str] = None, payload: dict = {}) -> tuple[dict, int]:
+    return {
+        "status": status,
+        "message": message,
+        "payload": payload
+    }, 200 if status is True else 400

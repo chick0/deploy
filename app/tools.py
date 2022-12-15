@@ -2,6 +2,7 @@ from flask import g
 
 from .models import User
 from .models import Project
+from .models import Deploy
 
 
 def get_g_cache(key: str):
@@ -16,7 +17,7 @@ def set_g_cache(key: str, value) -> None:
 
 
 def get_project_name(project_id: int) -> str:
-    key = f"project.name:{project_id}"
+    key = f"project.{project_id}.name"
     name = get_g_cache(key)
 
     if name is None:
@@ -36,7 +37,7 @@ def get_project_name(project_id: int) -> str:
 
 
 def get_user_email(user_id: int) -> str:
-    key = f"user.email:{user_id}"
+    key = f"user.{user_id}.email"
     email = get_g_cache(key)
 
     if email is None:
@@ -50,3 +51,20 @@ def get_user_email(user_id: int) -> str:
         set_g_cache(key, email)
 
     return email
+
+
+def get_deploy_created_at(deploy_id: int):
+    key = f"deploy.{deploy_id}.created_at"
+    created_at = get_g_cache(key)
+
+    if created_at is None:
+        deploy: Deploy = Deploy.query.with_entities(
+            Deploy.created_at
+        ).filter_by(
+            id=deploy_id
+        ).first()
+
+        created_at = deploy.created_at
+        set_g_cache(key, created_at)
+
+    return created_at

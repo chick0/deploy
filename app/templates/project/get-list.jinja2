@@ -17,7 +17,7 @@
                     {% if project.last_deploy is none%}
                         <p><span class="tag is-warning is-medium">배포</span> 배포 기록이 없습니다!</p>
                     {% else %}
-                        <p><span class="tag is-success is-medium">배포</span> {{ project.last_deploy }}</p>
+                        <p><span class="tag is-success is-medium">배포</span> {{ project.last_deploy|get_deploy_created_at }}</p>
                     {% endif %}
                     {% if token[project.id] == 0 %}
                         <p><span class="tag is-danger is-medium">토큰</span> 배포 토큰이 없습니다!</p>
@@ -25,6 +25,7 @@
                         <p><span class="tag is-success is-medium">토큰</span> <b>{{ token[project.id] }}개</b>의 배포 토큰이 등록되어있습니다.</p>
                     {% endif %}
                 </div>
+                <div id="display-{{ project.id }}"></div>
                 <hr>
                 <div class="buttons">
                     {% if token[project.id] == 0 %}
