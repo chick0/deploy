@@ -117,17 +117,20 @@ function on_click(element) {
                     box.appendChild(document.createElement("hr"));
                     box.appendChild(buttons);
 
+                    const remove = document.createElement("button");
+                    const apply = document.createElement("button");
+                    const tree = document.createElement("button");
+
                     function loading_toggle() {
                         remove.classList.toggle("is-loading");
                         apply.classList.toggle("is-loading");
+                        tree.classList.toggle("is-loading");
                     }
 
-                    const remove = document.createElement("button");
                     remove.classList.add("button", "is-danger");
-                    remove.dataset.id = deploy.id;
                     remove.innerText = "버전 삭제하기";
-                    remove.addEventListener("click", (event) => {
-                        if (event.currentTarget.classList.contains("is-loading")) {
+                    remove.addEventListener("click", () => {
+                        if (remove.classList.contains("is-loading")) {
                             return;
                         }
 
@@ -154,34 +157,88 @@ function on_click(element) {
 
                     buttons.appendChild(remove);
 
-                    const apply = document.createElement("button");
-                    apply.classList.add("button", "is-link");
-                    apply.dataset.id = deploy.id;
-                    apply.innerText = "버전 적용하기";
-                    apply.addEventListener("click", (event) => {
-                        if (event.currentTarget.classList.contains("is-loading")) {
-                            return;
-                        }
+                    if (deploy.size !== null) {
+                        // apply
+                        apply.classList.add("button", "is-link");
+                        apply.innerText = "버전 적용하기";
+                        apply.addEventListener("click", () => {
+                            if (apply.classList.contains("is-loading")) {
+                                return;
+                            }
 
-                        if (confirm("해당 버전을 적용하시겠습니까?")) {
+                            if (confirm("해당 버전을 적용하시겠습니까?")) {
+                                loading_toggle();
+                                fetch(`/api/deploy/${deploy.id}`, {
+                                    method: "POST",
+                                })
+                                    .then((resp) => resp.json())
+                                    .then((json) => {
+                                        alert(json.message);
+                                        element.click();
+                                    })
+                                    .catch(() => {
+                                        alert("버전을 적용하는 과정에서 알 수 없는 오류가 발생했습니다.");
+                                        loading_toggle();
+                                    });
+                            }
+                        });
+
+                        buttons.appendChild(apply);
+
+                        // tree
+                        tree.classList.add("button", "is-warning", "is-hidden-mobile");
+                        tree.innerText = "자세히 보기";
+                        tree.addEventListener("click", () => {
+                            if (tree.classList.contains("is-loading")) {
+                                return;
+                            }
+
                             loading_toggle();
-                            fetch(`/api/deploy/${deploy.id}`, {
-                                method: "POST",
-                            })
+                            fetch(`/api/deploy/${deploy.id}/tree`)
                                 .then((resp) => resp.json())
                                 .then((json) => {
-                                    alert(json.message);
-                                    element.click();
+                                    loading_toggle();
+
+                                    if (json.status === true) {
+                                        const tree_display = document.createElement("div");
+                                        tree_display.classList.add("box");
+
+                                        json.payload.members.forEach((member) => {
+                                            const p = document.createElement("p");
+
+                                            const b = document.createElement("b");
+                                            b.style.minWidth = "75px";
+                                            b.style.display = "inline-block";
+
+                                            if (member.is_dir) {
+                                                b.innerText = " ";
+                                            } else {
+                                                b.innerText = size2str(member.size);
+                                            }
+
+                                            p.appendChild(b);
+                                            p.appendChild(document.createTextNode(member.name));
+
+                                            tree_display.appendChild(p);
+                                        });
+
+                                        const total_size = document.createElement("p");
+                                        total_size.innerHTML = `<b>= ${size2str(json.payload.total_size)}</b>`;
+                                        tree_display.appendChild(total_size);
+
+                                        box.appendChild(tree_display);
+                                        tree.remove();
+                                    } else {
+                                        alert(json.message);
+                                    }
                                 })
                                 .catch(() => {
-                                    alert("버전을 적용하는 과정에서 알 수 없는 오류가 발생했습니다.");
+                                    alert("파일의 세부 정보를 불러오는 과정에서 알 수 없는 오류가 발생했습니다.");
                                     loading_toggle();
                                 });
-                        }
-                    });
+                        });
 
-                    if (deploy.size !== null) {
-                        buttons.appendChild(apply);
+                        buttons.appendChild(tree);
                     }
 
                     display.appendChild(box);

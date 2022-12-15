@@ -1,4 +1,5 @@
 from os import remove
+from zipfile import ZipFile
 from logging import getLogger
 from datetime import datetime
 
@@ -17,6 +18,7 @@ from .utils import auth_required
 from .utils import get_save_path
 from .utils import unzip_uploaded
 from .utils import set_project_deploy
+from .utils import fix_zip_filename
 from .path import upload_path_with_deploy_id
 
 bp = Blueprint("deploy", __name__, url_prefix="/deploy")
@@ -172,4 +174,58 @@ def apply(user: User, deploy_id: int):
 
     return response(
         message="버전이 교체되었습니다."
+    )
+
+
+@bp.get("/<int:deploy_id>/tree")
+@login_required
+def tree(user: User, deploy_id: int):
+    deploy: Deploy = Deploy.query.filter_by(
+        id=deploy_id
+    ).first()
+
+    if deploy is None:
+        return response(
+            status=False,
+            message="등록된 버전이 아닙니다."
+        )
+
+    if user.id == 1:
+        pass
+    elif Token.query.filter_by(
+        owner=user.id,
+        project=deploy.project
+    ).count() == 0:
+        return response(
+            status=False,
+            message="권한이 없습니다."
+        )
+
+    path = upload_path_with_deploy_id(deploy.owner, deploy_id)
+
+    members = []
+    total_size = 0
+
+    with ZipFile(path, mode="r") as zip:
+        for member in zip.infolist():
+            filename = fix_zip_filename(member.filename)
+            filesize = member.file_size
+
+            if filename != "./" and filename != "/":
+                if member.is_dir():
+                    filename = filename[:-1]
+                else:
+                    total_size += filesize
+
+                members.append({
+                    "name": filename,
+                    "size": filesize,
+                    "is_dir": member.is_dir()
+                })
+
+    return response(
+        payload={
+            "members": members,
+            "total_size": total_size,
+        }
     )

@@ -117,7 +117,7 @@ def unzip_uploaded(user_id: int, deploy_id: int):
 
     with ZipFile(file=path) as zip:
         for member in zip.infolist():
-            member.filename = member.filename.encode("cp437").decode("cp949").encode("utf-8").decode("utf-8")
+            member.filename = fix_zip_filename(member.filename)
             zip.extract(member, output)
 
 
@@ -127,3 +127,7 @@ def set_project_deploy(deploy_id: int, name: str):
 
     rmtree(project_path)
     rename(unzip_path, project_path)
+
+
+def fix_zip_filename(filename: str) -> str:
+    return filename.encode("cp437").decode("cp949").encode("utf-8").decode("utf-8")
