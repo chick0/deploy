@@ -75,7 +75,7 @@ def user_add_post(user: User):
     db.session.add(new_user)
     db.session.commit()
 
-    logger.info(f"User added {new_user.email!r} from {get_from()}")
+    logger.info(f"New user id {new_user.id} {new_user.email!r} added from {get_from()}")
 
     return render_template(
         "admin/user-add-post.jinja2",
@@ -102,7 +102,7 @@ def password_reset(user_id: int, user: User):
 
     db.session.commit()
 
-    logger.info(f"Password reset {target.email!r} from {get_from()}")
+    logger.info(f"Admin set user id {target.id} password to temp password from {get_from()}")
 
     return render_template(
         "admin/password-reset.jinja2",

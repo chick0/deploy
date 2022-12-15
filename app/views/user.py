@@ -77,6 +77,6 @@ def password_update_post(user: User):
     user.password_updated_at = datetime.now()
     db.session.commit()
 
-    logger.info(f"User update password {user.email!r} from {get_from()}")
+    logger.info(f"({user.id}) {user.email} user update password from {get_from()}")
 
     return redirect(url_for("user.dashboard"))

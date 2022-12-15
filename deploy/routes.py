@@ -131,7 +131,7 @@ def delete(user: User, deploy_id: int):
     db.session.delete(deploy)
     db.session.commit()
 
-    logger.info(f"Deploy id {deploy.id} is deleted from {get_from()}")
+    logger.info(f"Deploy id {deploy.id} is deleted by {user.id} from {get_from()}")
 
     return response(
         message="해당 버전이 삭제되었습니다."
@@ -175,7 +175,7 @@ def apply(user: User, deploy_id: int):
     project.last_deploy = deploy.id
     db.session.commit()
 
-    logger.info(f"({deploy.id}) Deploy Status: Applied from {get_from()}")
+    logger.info(f"Deploy id {deploy.id} applied by {user.id} from {get_from()}")
 
     return response(
         message="버전이 교체되었습니다."

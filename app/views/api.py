@@ -96,7 +96,7 @@ def delete_token(token_id: int, user: User):
     db.session.delete(token)
     db.session.commit()
 
-    logger.info(f"Deploy token is deleted id={token.id} by {user.email!r} from {get_from()}")
+    logger.info(f"Deploy token id {token.id} is deleted by {user.email!r} from {get_from()}")
 
     return response(
         message="배포 토큰이 삭제되었습니다."

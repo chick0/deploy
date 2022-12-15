@@ -116,7 +116,7 @@ def create_post(user: User):
     db.session.add(tk)
     db.session.commit()
 
-    logger.info(f"Deploy token created id={tk.id} from {get_from()}")
+    logger.info(f"Deploy token id {tk.id}, owner {tk.owner}, project {tk.project} is created from {get_from()}")
 
     return render_template(
         "token/create-post.jinja2",

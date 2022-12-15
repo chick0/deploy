@@ -38,7 +38,7 @@ def login():
 @bp.post("/login")
 @login_not_required
 def login_post():
-    fail_message = "Login failed cause {0}. And request from " + get_from()
+    fail_message = "Login failed cause {0} from " + get_from()
 
     email = request.form.get("email", "")
 
@@ -77,7 +77,7 @@ def login_post():
 
     session['user.id'] = user.id
     session['user.password'] = user.password
-    logger.info(f"User login {user.email!r} from {get_from()}")
+    logger.info(f"User id {user.id} logined from {get_from()}")
 
     return redirect(url_for("project.get_list"))
 
@@ -125,7 +125,7 @@ def password_update_post():
     user.password_updated_at = datetime.now()
     db.session.commit()
 
-    logger.info(f"User update *temp* password {user.email!r} from {get_from()}")
+    logger.info(f"User id {user.id} change temp password from {get_from()}")
 
     session['user.id'] = user.id
     session['user.password'] = user.password
