@@ -1,5 +1,6 @@
 from os import stat
 from os import remove
+from logging import getLogger
 from datetime import datetime
 
 from flask import Blueprint
@@ -11,6 +12,7 @@ from app.models import User
 from app.models import Project
 from app.models import Token
 from app.models import Deploy
+from app.utils import get_from
 from app.user import login_required
 from .utils import auth_required
 from .utils import get_save_path
@@ -19,6 +21,7 @@ from .utils import set_project_deploy
 from .path import upload_path_with_deploy_id
 
 bp = Blueprint("deploy", __name__, url_prefix="/deploy")
+logger = getLogger()
 
 
 @bp.post("/upload")
@@ -44,6 +47,8 @@ def upload(project: Project, token: Token):
     file.save(path.path)
     file.close()
 
+    logger.info(f"({path.deploy.id}) Deploy Status: Saved from {get_from()}")
+
     project.last_deploy = path.deploy.id
 
     with open(path.path, mode="rb") as reader:
@@ -57,6 +62,7 @@ def upload(project: Project, token: Token):
         path.deploy.message = "업로드된 파일이 zip 파일이 아닙니다."
 
         db.session.commit()
+        logger.info(f"({path.deploy.id}) Deploy Status: Fail cause file is not zip file")
 
         return response(
             status=False,
@@ -69,6 +75,8 @@ def upload(project: Project, token: Token):
     path.deploy.is_success = True
     project.last_deploy = path.deploy.id
     db.session.commit()
+
+    logger.info(f"({path.deploy.id}) Deploy Status: Success")
 
     return response(
         message="파일 업로드가 완료되었습니다.",
@@ -123,6 +131,8 @@ def delete(user: User, deploy_id: int):
     db.session.delete(deploy)
     db.session.commit()
 
+    logger.info(f"Deploy id {deploy.id} is deleted from {get_from()}")
+
     return response(
         message="해당 버전이 삭제되었습니다."
     )
@@ -164,6 +174,8 @@ def apply(user: User, deploy_id: int):
 
     project.last_deploy = deploy.id
     db.session.commit()
+
+    logger.info(f"({deploy.id}) Deploy Status: Applied from {get_from()}")
 
     return response(
         message="버전이 교체되었습니다."
