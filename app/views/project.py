@@ -5,7 +5,6 @@ from logging import getLogger
 from datetime import datetime
 
 from flask import Blueprint
-from flask import current_app as app
 from flask import request
 from flask import flash
 from flask import redirect
@@ -18,6 +17,7 @@ from ..models import Project
 from ..models import Token
 from ..models import Deploy
 from ..user import login_required
+from ..max import check_project_max
 from ..utils import get_from
 from deploy.path import upload_path_with_deploy_id
 from deploy.path import project_path_with_name
@@ -58,25 +58,16 @@ def get_list(user: User):
 
 @bp.get("/create")
 @login_required
+@check_project_max
 def create(user: User):
-    count = Project.query.filter_by(
-        owner=user.id
-    ).count()
-
-    PROJECT_MAX = app.config['PROJECT_MAX']
-
-    if count > PROJECT_MAX:
-        flash(f"{PROJECT_MAX}개보다 많은 프로젝트를 생성할 수 없습니다.")
-        return redirect(url_for("project.get_list"))
-
     return render_template(
-        "project/create.jinja2",
-        count=count
+        "project/create.jinja2"
     )
 
 
 @bp.post("/create")
 @login_required
+@check_project_max
 def create_post(user: User):
     name = request.form.get("name", "")
 

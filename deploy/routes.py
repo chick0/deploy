@@ -13,6 +13,7 @@ from app.models import Project
 from app.models import Token
 from app.models import Deploy
 from app.utils import get_from
+from app.max import check_deploy_max
 from app.user import login_required
 from .utils import auth_required
 from .utils import get_save_path
@@ -27,6 +28,7 @@ logger = getLogger()
 
 @bp.post("/upload")
 @auth_required
+@check_deploy_max
 def upload(project: Project, token: Token):
     if len(request.files) != 1:
         return response(
