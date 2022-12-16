@@ -146,6 +146,12 @@ def apply(user: User, deploy_id: int):
             message="등록된 버전이 아닙니다."
         )
 
+    if deploy.is_success is not True:
+        return response(
+            status=False,
+            message="성공한 버전만 적용할 수 있습니다."
+        )
+
     project: Project = Project.query.filter_by(
         id=deploy.project
     ).first()
@@ -153,7 +159,7 @@ def apply(user: User, deploy_id: int):
     if project is None:
         return response(
             status=False,
-            message="등록된 버전이 아닙니다."
+            message="등록된 프로젝트가 아닙니다."
         )
 
     if user.id == 1:
