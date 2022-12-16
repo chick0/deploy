@@ -3,6 +3,7 @@ from typing import NamedTuple
 from datetime import datetime
 from functools import wraps
 from zipfile import ZipFile
+from logging import getLogger
 
 from flask import request
 
@@ -10,6 +11,7 @@ from app import db
 from app.models import Project
 from app.models import Token
 from app.models import Deploy
+from app.utils import get_from
 from app.utils import response
 from app.views.project import RE
 from . import create_dir
@@ -17,6 +19,8 @@ from .path import upload_path_with_deploy_id
 from .path import unzip_path_with_deploy_id
 from .path import project_path_with_name
 from .remove import remove_project_path_with_name
+
+logger = getLogger()
 
 
 class GetSavePathResponse(NamedTuple):
@@ -77,6 +81,16 @@ def auth_required(f):
                 status=False,
                 message="등록된 배포 토큰이 아닙니다."
             )
+
+        if tk.expired_at is None:
+            pass
+        else:
+            if datetime.now() >= tk.expired_at:
+                logger.info(f"Expired deploy token id {tk.id} is used from {get_from()}")
+                return response(
+                    status=False,
+                    message="만료된 배포 토큰입니다."
+                )
 
         ########################################################
 
