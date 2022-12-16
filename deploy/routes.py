@@ -170,7 +170,14 @@ def apply(user: User, deploy_id: int):
             message="해당 버전을 적용할 권한이 없습니다."
         )
 
-    unzip_uploaded(deploy.owner, deploy.id)
+    try:
+        unzip_uploaded(deploy.owner, deploy.id)
+    except FileNotFoundError:
+        return response(
+            status=False,
+            message="업로드된 파일이 삭제되어 적용할 수 없습니다."
+        )
+
     set_project_deploy(deploy.id, project.name)
 
     project.last_deploy = deploy.id
@@ -212,22 +219,28 @@ def tree(user: User, deploy_id: int):
     members = []
     total_size = 0
 
-    with ZipFile(path, mode="r") as zip:
-        for member in zip.infolist():
-            filename = fix_zip_filename(member.filename)
-            filesize = member.file_size
+    try:
+        with ZipFile(path, mode="r") as zip:
+            for member in zip.infolist():
+                filename = fix_zip_filename(member.filename)
+                filesize = member.file_size
 
-            if filename != "./" and filename != "/":
-                if member.is_dir():
-                    filename = filename[:-1]
-                else:
-                    total_size += filesize
+                if filename != "./" and filename != "/":
+                    if member.is_dir():
+                        filename = filename[:-1]
+                    else:
+                        total_size += filesize
 
-                members.append({
-                    "name": filename,
-                    "size": filesize,
-                    "is_dir": member.is_dir()
-                })
+                    members.append({
+                        "name": filename,
+                        "size": filesize,
+                        "is_dir": member.is_dir()
+                    })
+    except FileNotFoundError:
+        return response(
+            status=False,
+            message="업로드된 파일이 삭제되어 조회할 수 없습니다."
+        )
 
     return response(
         payload={
