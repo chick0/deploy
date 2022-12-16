@@ -193,8 +193,11 @@ def delete(user: User):
 @bp.post("/delete")
 @login_required
 def delete_post(user: User):
+    by_admin = False
+
     if user.id == 1:
         try:
+            by_admin = True
             user_id = int(request.args.get("user_id", "a"))
 
             user = User.query.filter_by(
@@ -254,7 +257,7 @@ def delete_post(user: User):
     db.session.delete(user)
     db.session.commit()
 
-    if user.id == 1:
+    if by_admin:
         logger.info(f"User id {user.id} is deleted by admin from {get_from()}")
 
         flash("계정이 삭제되었습니다.", "success")
