@@ -1,0 +1,29 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+<div class="section">
+    <div class="container">
+        <h1 class="title is-1 has-text-centered">계정 삭제</h1>
+        <div class="box">
+            <div class="content is-medium">
+                <b>다음의 요소들이 삭제됩니다.</b>
+                <ul>
+                    {% for item in delete_list %}
+                        <li>{{ item|safe }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <hr>
+            <form method="post">
+                <div class="columns">
+                    <div class="column">
+                        <a class="button is-link is-medium is-fullwidth" href="{{ url_for('user.dashboard') }}">취소</a>
+                    </div>
+                    <div class="column">
+                        <button class="button is-danger is-medium is-fullwidth">계정 삭제</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+<nav class="navbar container">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">Deploy</a>
+
+        <a class="navbar-burger" data-target="navbar">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="navbar" class="navbar-menu">
+        <div class="navbar-start">
+            {% if session['user.id'] %}
+                {% if session['user.id'] == 1 %}
+                    {% set admin = true %}
+                {% endif %}
+
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link" href="{{ url_for('user.dashboard') }}">
+                        계정
+                    </a>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="{{ url_for('user.dashboard') }}">
+                            대시보드
+                        </a>
+                        <a class="navbar-item" href="{{ url_for('user.password_update') }}">
+                            비밀번호 변경
+                        </a>
+                        {% if admin is true %}
+                            <hr class="navbar-divider">
+                            <a class="navbar-item" href="{{ url_for('admin.user_list') }}">
+                                계정 목록
+                            </a>
+                            <a class="navbar-item" href="{{ url_for('admin.user_add') }}">
+                                계정 등록
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link" href="{{ url_for('project.get_list') }}">
+                        프로젝트
+                    </a>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="{{ url_for('project.get_list') }}">
+                            프로젝트 목록
+                        </a>
+                        <a class="navbar-item" href="{{ url_for('project.create') }}">
+                            프로젝트 생성
+                        </a>
+                    </div>
+                </div>
+
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link" href="{{ url_for('token.get_list') }}">
+                        배포 토큰
+                    </a>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="{{ url_for('token.get_list') }}">
+                            배포 토큰 목록
+                        </a>
+                        <a class="navbar-item" href="{{ url_for('token.create') }}">
+                            배포 토큰 생성
+                        </a>
+                        <a class="navbar-item" href="{{ url_for('token.test') }}">
+                            배포 토큰 테스트
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="buttons">
+                    {% if session['user.id'] %}
+                        <a class="button is-light" href="{{ url_for('auth.logout') }}">
+                            로그아웃
+                        </a>
+                    {% else %}
+                        <a class="button is-primary" href="{{ url_for('auth.login') }}">
+                            로그인
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,9 @@
+{
+    "scripts": {
+        "p": "prettier ./app/static/ --check",
+        "p:write": "prettier ./app/static/ --write"
+    },
+    "devDependencies": {
+        "prettier": "^2.8.0"
+    }
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, shrink-to-fit=no" />
+        <meta name="author" content="chick_0">
+        <meta name="robots" content="noindex">
+        <title>Deploy</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='bulma.min.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+        {% block head %}{% endblock %}
+    </head>
+    <body>
+        {% include "navbar.jinja2" %}
+
+        {% for message in get_flashed_messages(category_filter=["message"]) %}
+            <div class="container">
+                <div class="notification is-danger">
+                    {{ message|safe }}
+                </div>
+            </div>
+        {% endfor %}
+
+        {% for message in get_flashed_messages(category_filter=["success"]) %}
+            <div class="container">
+                <div class="notification is-success">
+                    {{ message|safe }}
+                </div>
+            </div>
+        {% endfor %}
+
+        {% block content %}{% endblock %}
+        <script src="{{ url_for('static', filename='navbar.js') }}"></script>
+    </body>
+</html>

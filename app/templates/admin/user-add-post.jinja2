@@ -1,0 +1,27 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+<div class="section">
+    <div class="container">
+        <h1 class="title is-1 has-text-centered">계정 등록</h1>
+        <p class="subtitle has-text-centered">임시 비밀번호를 확인하세요.</p>
+        <div class="columns is-centered">
+            <div class="column is-one-third">
+                <div class="message is-warning">
+                    <div class="message-header">
+                        <p>경고</p>
+                    </div>
+                    <div class="message-body">
+                        <p>임시 비밀번호는 다시 조회할 수 없습니다.</p>
+                        <p>만약 임시 비밀번호를 잃어버렸다면, 다시 설정해야합니다.</p>
+                    </div>
+                </div>
+
+                <div class="content box">
+                    <p>이메일(아이디): {{ email }}</p>
+                    <p>임시 비밀번호 : {{ password }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

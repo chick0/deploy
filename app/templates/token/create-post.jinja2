@@ -1,0 +1,42 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+<div class="section">
+    <div class="container">
+        <h1 class="title is-1 has-text-centered">배포 토큰</h1>
+        <div class="box">
+            <h2 class="title is-5 mb-3">연결된 프로젝트</h2>
+            <p>{{ project_id|get_project_name }}</p>
+        </div>
+
+        <div class="box">
+            <h2 class="title is-5 mb-3">토큰 만료 날짜</h2>
+            {% if expired_at is none %}
+                <p>해당 토큰은 만료되지 않습니다.</p>
+            {% else %}
+                <p>{{ expired_at }}</p>
+            {% endif %}
+        </div>
+
+        <div class="box">
+            <div class="field">
+                <label class="label">토큰</label>
+                <div class="control has-icons-left">
+                    <input class="input tk-value" value="{{ token }}" readonly>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-key"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="buttons">
+                <button class="button is-link tk-copy">복사하기</button>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <a class="button is-link is-medium" href="{{ url_for('project.get_list') }}#{{ project_id }}">프로젝트 목록</a>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='token-copy.js') }}"></script>
+{% endblock %}

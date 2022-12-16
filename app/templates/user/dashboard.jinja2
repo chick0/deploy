@@ -1,0 +1,89 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+<div class="section">
+    <div class="container">
+        <h1 class="title is-1 has-text-centered">대시보드</h1>
+        <div class="buttons is-centered">
+            <a class="button is-link is-medium" href="{{ url_for('user.password_update') }}">비밀번호 변경</a>
+            <a class="button is-danger is-medium" href="{{ url_for('user.delete') }}">계정 삭제</a>
+        </div>
+
+        <div class="box">
+            <div class="field">
+                <label class="label">이메일</label>
+                <div class="control has-icons-left">
+                    <input class="input" value="{{ user.email }}" readonly>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="field">
+                <label class="label">가입 날짜</label>
+                <div class="control has-icons-left">
+                    <input class="input" value="{{ user.created_at }}" readonly>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-calendar"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">마지막 로그인 날짜</label>
+                <div class="control has-icons-left">
+                    <input class="input" value="{{ user.last_login_at }}" readonly>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-lock-open"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">비밀번호 변경 날짜</label>
+                <div class="control has-icons-left">
+                    <input class="input" value="{{ user.password_updated_at }}" readonly>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="box">
+            <h2 class="title is-5 mb-3">사용중인 버전 용량</h2>
+            <div class="content">
+                <p>{{ using_size|size2str }}</p>
+            </div>
+        </div>
+
+        <div class="box">
+            <h2 class="title is-5 mb-3">프로젝트 사용률</h2>
+            {% if p_count_per <= 50 %}
+                {% set color = "info" %}
+            {% elif p_count_per <= 70 %}
+                {% set color = "warning" %}
+            {% else %}
+                {% set color = "danger" %}
+            {% endif %}
+            <progress class="progress is-{{ color }}" value="{{ p_count_per }}" max="100">{{ p_count_per }}%</progress>
+            <hr>
+            <h2 class="title is-5 mb-3">버전 사용률</h2>
+            {% if d_count_per <= 50 %}
+                {% set color = "info" %}
+            {% elif d_count_per <= 70 %}
+                {% set color = "warning" %}
+            {% else %}
+                {% set color = "danger" %}
+            {% endif %}
+            <progress class="progress is-{{ color }}" value="{{ d_count_per }}" max="100">{{ d_count_per }}%</progress>
+            <hr>
+            <div class="buttons">
+                <a class="button is-danger is-medium" href="{{ url_for('user.clean_up') }}">미사용 버전 삭제</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
