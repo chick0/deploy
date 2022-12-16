@@ -37,10 +37,10 @@
 
                                 {{ user.email }}
                                 <div class="buttons mt-2">
+                                    <button class="button is-warning ask-reset" data-href="{{ url_for('admin.password_reset', user_id=user.id) }}">임시 비밀번호 설정</button>
                                     {% if user.id != 1 %}
                                         <a class="button is-danger" href="{{ url_for('user.delete', user_id=user.id) }}">계정 삭제</a>
                                     {% endif %}
-                                    <button class="button is-warning ask-reset" data-href="{{ url_for('admin.password_reset', user_id=user.id) }}">임시 비밀번호 설정</button>
                                 </div>
                             </td>
                             <td>{{ user.created_at }}</td>
