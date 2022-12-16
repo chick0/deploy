@@ -75,7 +75,7 @@ def user_add_post(user: User):
     db.session.add(new_user)
     db.session.commit()
 
-    logger.info(f"New user id {new_user.id} {new_user.email!r} added from {get_from()}")
+    logger.info(f"New user id {new_user.id} and email {new_user.email} is added from {get_from()}")
 
     return render_template(
         "admin/user-add-post.jinja2",

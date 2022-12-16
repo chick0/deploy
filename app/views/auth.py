@@ -77,7 +77,7 @@ def login_post():
 
     session['user.id'] = user.id
     session['user.password'] = user.password
-    logger.info(f"User id {user.id} logined from {get_from()}")
+    logger.info(f"User id {user.id} and email {user.email} is logined from {get_from()}")
 
     return redirect(url_for("project.get_list"))
 
