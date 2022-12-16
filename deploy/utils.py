@@ -1,5 +1,4 @@
 from os import rename
-from shutil import rmtree
 from typing import NamedTuple
 from datetime import datetime
 from functools import wraps
@@ -17,6 +16,7 @@ from . import create_dir
 from .path import upload_path_with_deploy_id
 from .path import unzip_path_with_deploy_id
 from .path import project_path_with_name
+from .remove import remove_project_path_with_name
 
 
 class GetSavePathResponse(NamedTuple):
@@ -125,7 +125,7 @@ def set_project_deploy(deploy_id: int, name: str):
     unzip_path = unzip_path_with_deploy_id(deploy_id)
     project_path = project_path_with_name(name)
 
-    rmtree(project_path)
+    remove_project_path_with_name(name)
     rename(unzip_path, project_path)
 
 

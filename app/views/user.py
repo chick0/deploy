@@ -1,8 +1,6 @@
 from os import stat
-from os import remove
 from os import listdir
 from os.path import join
-from shutil import rmtree
 from hashlib import sha512
 from logging import getLogger
 from datetime import datetime
@@ -26,8 +24,10 @@ from ..tools import get_g_cache
 from ..tools import set_g_cache
 from deploy import UPLOAD_DIR
 from deploy import create_dir
-from deploy.path import upload_path_with_deploy_id
-from deploy.path import project_path_with_name
+from deploy.remove import remove_user_path_with_user_id
+from deploy.remove import remove_upload_path_with_deploy_id
+from deploy.remove import remove_unzip_path_with_deploy_id
+from deploy.remove import remove_project_path_with_name
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 logger = getLogger()
@@ -124,14 +124,11 @@ def clean_up(user: User):
             set_g_cache(key, using_id)
 
         if deploy.id != using_id:
-            try:
-                remove(upload_path_with_deploy_id(user.id, deploy.id))
-            except FileNotFoundError:
-                pass
-            finally:
-                count += 1
-                logger.info(f"Deploy id {deploy.id} is deleted by {user.id} from {get_from()}")
-                db.session.delete(deploy)
+            remove_upload_path_with_deploy_id(user.id, deploy.id)
+            logger.info(f"Deploy id {deploy.id} is deleted by {user.id} from {get_from()}")
+
+            db.session.delete(deploy)
+            count += 1
 
     db.session.commit()
 
@@ -224,10 +221,7 @@ def delete_post(user: User):
     ).all():
         db.session.delete(deploy)
 
-    try:
-        rmtree(join(UPLOAD_DIR, str(user.id)))
-    except FileNotFoundError:
-        pass
+    remove_user_path_with_user_id(user.id)
 
     for project in Project.query.filter_by(
         owner=user.id
@@ -240,18 +234,11 @@ def delete_post(user: User):
         for deploy in Deploy.query.filter_by(
             project=project.id
         ).all():
-            try:
-                remove(upload_path_with_deploy_id(deploy.owner, deploy.id))
-            except FileNotFoundError:
-                pass
-
+            remove_upload_path_with_deploy_id(deploy.owner, deploy.id)
+            remove_unzip_path_with_deploy_id(deploy.id)
             db.session.delete(deploy)
 
-        try:
-            rmtree(project_path_with_name(project.name))
-        except FileNotFoundError:
-            pass
-
+        remove_project_path_with_name(project.name)
         db.session.delete(project)
 
     db.session.delete(user)

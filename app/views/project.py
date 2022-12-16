@@ -1,6 +1,4 @@
-from os import remove
 from re import compile
-from shutil import rmtree
 from logging import getLogger
 from datetime import datetime
 
@@ -19,8 +17,9 @@ from ..models import Deploy
 from ..user import login_required
 from ..max import check_project_max
 from ..utils import get_from
-from deploy.path import upload_path_with_deploy_id
-from deploy.path import project_path_with_name
+from deploy.remove import remove_upload_path_with_deploy_id
+from deploy.remove import remove_unzip_path_with_deploy_id
+from deploy.remove import remove_project_path_with_name
 
 bp = Blueprint("project", __name__, url_prefix="/project")
 logger = getLogger()
@@ -177,17 +176,11 @@ def delete_post(user: User, project_id: int):
     ).all()
 
     for deploy in deploy_list:
-        try:
-            remove(upload_path_with_deploy_id(deploy.owner, deploy.id))
-        except FileNotFoundError:
-            pass
-
+        remove_upload_path_with_deploy_id(deploy.owner, deploy.id)
+        remove_unzip_path_with_deploy_id(deploy.id)
         db.session.delete(deploy)
 
-    try:
-        rmtree(project_path_with_name(project.name))
-    except FileNotFoundError:
-        pass
+    remove_project_path_with_name(project.name)
 
     db.session.delete(project)
     db.session.commit()

@@ -1,4 +1,3 @@
-from os import remove
 from zipfile import ZipFile
 from logging import getLogger
 from datetime import datetime
@@ -21,6 +20,8 @@ from .utils import unzip_uploaded
 from .utils import set_project_deploy
 from .utils import fix_zip_filename
 from .path import upload_path_with_deploy_id
+from .remove import remove_upload_path_with_deploy_id
+from .remove import remove_unzip_path_with_deploy_id
 
 bp = Blueprint("deploy", __name__, url_prefix="/deploy")
 logger = getLogger()
@@ -60,7 +61,7 @@ def upload(project: Project, token: Token):
     if head.startswith(b"PK"):
         pass
     else:
-        remove(path.path)
+        remove_upload_path_with_deploy_id(token.owner, path.deploy.id)
         path.deploy.is_success = False
         path.deploy.message = "업로드된 파일이 zip 파일이 아닙니다."
 
@@ -119,11 +120,8 @@ def delete(user: User, deploy_id: int):
             message="해당 버전을 삭제할 권한이 없습니다."
         )
 
-    try:
-        path = upload_path_with_deploy_id(deploy.owner, deploy.id)
-        remove(path)
-    except FileNotFoundError:
-        pass
+    remove_upload_path_with_deploy_id(deploy.owner, deploy.id)
+    remove_unzip_path_with_deploy_id(deploy.id)
 
     db.session.delete(deploy)
     db.session.commit()
