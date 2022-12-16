@@ -30,6 +30,10 @@
     - 업로드된 파일의 용량과 압축 파일에 포함된 파일 목록을 확인할 수 있습니다.
     - 또 해당 버전을 삭제하거나 적용할 수 있습니다.
 
+## 배포 사용 예시
+
+단순하게 파일 업로드 기능만 구현되어있는 [cli.py](https://gist.github.com/chick0/8b5f5f32e652210e98d8941df075d949)를 사용하는 예시는 [example.yaml](https://github.com/chick0/deploy/blob/master/example.yaml)를 참고해주세요.
+
 ## 작동 방식
 
 1. 프로젝트를 생성합니다.
