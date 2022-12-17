@@ -1,10 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const el = document.querySelector(".navbar-burger");
+    /** @type {HTMLAnchorElement} */
+    const burger = document.querySelector(".navbar-burger");
 
-    el.addEventListener("click", () => {
-        const target = document.getElementById(el.dataset.target);
+    burger.addEventListener("click", () => {
+        /** @type {HTMLElement} */
+        const target = document.getElementById(burger.dataset.target);
 
-        el.classList.toggle("is-active");
+        burger.classList.toggle("is-active");
         target.classList.toggle("is-active");
     });
 });

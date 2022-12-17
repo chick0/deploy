@@ -1,16 +1,28 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const expired_field = document.getElementById("expired_field");
-    const expired_at = document.getElementById("expired_at");
+/**
+ * @param {HTMLInputElement} checkbox
+ */
+function update_expired_field(checkbox) {
+    /** @type {HTMLInputElement} */
+    const field = document.querySelector("input#expired_field");
 
-    document.querySelector("input[type=checkbox]").addEventListener("change", (event) => {
-        if (event.currentTarget.checked) {
-            expired_field.classList.remove("is-hidden");
-            expired_at.name = "expired_at";
-            expired_at.required = true;
-        } else {
-            expired_field.classList.add("is-hidden");
-            expired_at.name = "-";
-            expired_at.required = false;
-        }
-    });
+    /** @type {HTMLInputElement} */
+    const at = document.querySelector("input#expired_at");
+
+    if (checkbox.checked) {
+        field.classList.remove("is-hidden");
+        at.name = "expired_at";
+        at.required = true;
+    } else {
+        field.classList.add("is-hidden");
+        at.name = "-";
+        at.required = false;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    /** @type {HTMLInputElement} */
+    const checkbox = document.querySelector("input[type=checkbox]");
+
+    update_expired_field(checkbox);
+    checkbox.addEventListener("change", () => update_expired_field(checkbox));
 });

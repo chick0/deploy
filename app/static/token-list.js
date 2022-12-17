@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("button.tk-delete").forEach((element) => {
         element.addEventListener("click", (event) => {
             if (confirm("해당 배포 토큰을 삭제하시겠습니까?")) {
+                // @ts-ignore
                 on_click(event.currentTarget);
             }
         });
