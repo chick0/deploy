@@ -82,6 +82,9 @@ def auth_required(f):
                 message="등록된 배포 토큰이 아닙니다."
             )
 
+        tk.last_used_at = datetime.now()
+        db.session.commit()
+
         if tk.expired_at is None:
             pass
         else:

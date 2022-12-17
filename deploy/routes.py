@@ -1,6 +1,5 @@
 from zipfile import ZipFile
 from logging import getLogger
-from datetime import datetime
 
 from flask import Blueprint
 from flask import request
@@ -44,8 +43,6 @@ def upload(project: Project, token: Token):
             status=False,
             message="업로드된 파일이 없습니다."
         )
-
-    token.last_used_at = datetime.now()
 
     path = get_save_path(token)
     file.save(path.path)
