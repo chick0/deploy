@@ -3,7 +3,6 @@ from typing import Optional
 from logging import getLogger
 
 from flask import Blueprint
-from flask import request
 
 from .. import db
 from ..models import User
@@ -11,12 +10,12 @@ from ..models import Project
 from ..models import Token
 from ..models import Deploy
 from ..user import login_required
-from .project import RE
 from ..utils import get_from
 from ..utils import response
 from ..tools import get_user_email
 from deploy import routes
 from deploy.path import upload_path_with_deploy_id
+from deploy.utils import auth_required
 
 bp = Blueprint("api", __name__, url_prefix="/api")
 bp.register_blueprint(routes.bp)
@@ -104,52 +103,8 @@ def delete_token(token_id: int, user: User):
 
 
 @bp.post("/token/test")
-def token_test():
-    name: str = request.headers.get("x-deploy-name", "")
-
-    if len(name) == 0:
-        return response(
-            status=False,
-            message="프로젝트 이름이 없습니다."
-        )
-
-    match = RE.match(name)
-
-    if match is None:
-        return response(
-            status=False,
-            message="프로젝트 이름이 올바르지 않습니다."
-        )
-
-    token: str = request.headers.get("x-deploy-token", "")
-
-    if len(token) == 0:
-        return response(
-            status=False,
-            message="배포 토큰이 없습니다."
-        )
-
-    project: Project = Project.query.filter_by(
-        name=name
-    ).first()
-
-    if project is None:
-        return response(
-            status=False,
-            message="등록된 프로젝트가 아닙니다."
-        )
-
-    tk: Token = Token.query.filter_by(
-        project=project.id,
-        token=token
-    ).first()
-
-    if tk is None:
-        return response(
-            status=False,
-            message="등록된 배포 토큰이 아닙니다."
-        )
-
+@auth_required
+def token_test(project: Project, token: Token):
     return response(
         message="배포 토큰 테스트에 성공했습니다!"
     )
