@@ -16,7 +16,7 @@
                     <p>연결된 프로젝트: <b>{{ token.project|get_project_name }}</b></p>
 
                     {% if token.expired_at is none %}
-                        <p>해당 토큰은 만료되지 않습니다.</p>
+                        <p><b class="has-text-danger">*</b> 해당 토큰은 만료되지 않습니다.</p>
                     {% else %}
                         <p>만료 날짜 : <b>{{ token.expired_at }}</b></p>
                     {% endif %}
@@ -25,6 +25,9 @@
                         <p>해당 토큰은 사용된적이 없습니다.</p>
                     {% else %}
                         <p>마지막 사용날짜: <b>{{ token.last_used_at }}</b></p>
+                        {% if token.expired_at is not none and token.last_used_at >= token.expired_at %}
+                            <p class="has-text-danger">만료된 토큰이 사용되었지만, <b>요청은 승인되지 않았습니다.</b></p>
+                        {% endif %}
                     {% endif %}
 
                     {% if session['user.id'] == 1 %}
