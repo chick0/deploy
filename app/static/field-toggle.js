@@ -2,8 +2,8 @@
  * @param {HTMLInputElement} checkbox
  */
 function update_expired_field(checkbox) {
-    /** @type {HTMLInputElement} */
-    const field = document.querySelector("input#expired_field");
+    /** @type {HTMLDivElement} */
+    const field = document.querySelector("div#expired_field");
 
     /** @type {HTMLInputElement} */
     const at = document.querySelector("input#expired_at");
