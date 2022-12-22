@@ -13,21 +13,19 @@
     <body>
         {% include "navbar.jinja2" %}
 
-        {% for message in get_flashed_messages(category_filter=["message"]) %}
-            <div class="container">
+        <div class="container">
+            {% for message in get_flashed_messages(category_filter=["message"]) %}
                 <div class="notification is-danger">
                     {{ message|safe }}
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
 
-        {% for message in get_flashed_messages(category_filter=["success"]) %}
-            <div class="container">
+            {% for message in get_flashed_messages(category_filter=["success"]) %}
                 <div class="notification is-success">
                     {{ message|safe }}
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
 
         {% block content %}{% endblock %}
         <script src="{{ url_for('static', filename='navbar.js') }}"></script>
