@@ -85,21 +85,16 @@ def auth_required(f):
         tk.last_used_at = datetime.now()
         db.session.commit()
 
-        if tk.expired_at is None:
-            pass
-        else:
-            if datetime.now() >= tk.expired_at:
-                logger.info(f"Expired deploy token id {tk.id} is used from {get_from()}")
-                return response(
-                    status=False,
-                    message="만료된 배포 토큰입니다."
-                )
+        if tk.expired_at is not None and datetime.now() >= tk.expired_at:
+            logger.info(f"Expired deploy token id {tk.id} is used from {get_from()}")
+            return response(
+                status=False,
+                message="만료된 배포 토큰입니다."
+            )
 
         ########################################################
 
-        if tk.owner == 1:
-            pass
-        elif tk.owner != project.owner:
+        if tk.owner != 1 and tk.owner != project.owner:
             return response(
                 status=False,
                 message="해당 프로젝트에 접근할 권한이 없습니다."

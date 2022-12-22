@@ -20,6 +20,7 @@ from ..models import Token
 from ..models import Deploy
 from ..user import login_required
 from ..utils import get_from
+from ..utils import logout
 from ..tools import get_g_cache
 from ..tools import set_g_cache
 from deploy import UPLOAD_DIR
@@ -251,5 +252,4 @@ def delete_post(user: User):
     else:
         logger.info(f"User id {user.id} is deleted from {get_from()}")
 
-        flash("계정이 삭제되었습니다.", "success")
-        return redirect(url_for("auth.logout"))
+        return logout("계정이 삭제되었습니다.", "success")

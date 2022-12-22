@@ -11,7 +11,7 @@ def _safe_rmtree(path: str) -> None:
     try:
         rmtree(path)
     except FileNotFoundError:
-        pass
+        return
 
 
 def remove_user_path_with_user_id(user_id: int) -> None:
@@ -24,7 +24,7 @@ def remove_upload_path_with_deploy_id(user_id: int, deploy_id: int) -> None:
     try:
         remove(upload_path_with_deploy_id(user_id, deploy_id))
     except FileNotFoundError:
-        pass
+        return
 
 
 def remove_unzip_path_with_deploy_id(deploy_id: int) -> None:

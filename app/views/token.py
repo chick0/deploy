@@ -92,9 +92,7 @@ def create_post(user: User):
         id=project_id
     ).first()
 
-    if user.id == 1:
-        pass
-    elif user.id != project.owner:
+    if user.id != 1 and user.id != project.owner:
         flash("배포 토큰을 생성할 권한이 없습니다.", "token-create")
         return redirect(url_for("token.create"))
 

@@ -120,9 +120,7 @@ def delete(user: User, project_id: int):
         flash("등록된 프로젝트가 아닙니다.")
         return redirect(url_for("project.get_list"))
 
-    if user.id == 1:
-        pass
-    elif user.id != project.owner:
+    if user.id != 1 and user.id != project.owner:
         flash("해당 프로젝트를 삭제할 권한이 없습니다.")
         return redirect(url_for("project.get_list"))
 
@@ -160,9 +158,7 @@ def delete_post(user: User, project_id: int):
         flash("등록된 프로젝트가 아닙니다.")
         return redirect(url_for("project.get_list"))
 
-    if user.id == 1:
-        pass
-    elif user.id != project.owner:
+    if user.id != 1 and user.id != project.owner:
         flash("해당 프로젝트를 삭제할 권한이 없습니다.")
         return redirect(url_for("project.get_list"))
 

@@ -18,13 +18,15 @@ from ..utils import get_from
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 logger = getLogger()
 
+project_list = "project.get_list"
+
 
 @bp.get("/user-list")
 @login_required
 def user_list(user: User):
     if user.id != 1:
-        flash("관리자만 사용할 수 있습니다.")
-        return redirect(url_for("project.get_list"))
+        flash("계정 목록은 관리자만 사용할 수 있습니다.")
+        return redirect(url_for(project_list))
 
     user_list: list[User] = User.query.all()
 
@@ -38,8 +40,8 @@ def user_list(user: User):
 @login_required
 def user_add(user: User):
     if user.id != 1:
-        flash("관리자만 사용할 수 있습니다.")
-        return redirect(url_for("project.get_list"))
+        flash("계정 등록은 관리자만 할 수 있습니다.")
+        return redirect(url_for(project_list))
 
     return render_template(
         "admin/user-add.jinja2"
@@ -50,8 +52,8 @@ def user_add(user: User):
 @login_required
 def user_add_post(user: User):
     if user.id != 1:
-        flash("관리자만 사용할 수 있습니다.")
-        return redirect(url_for("project.get_list"))
+        flash("계정 등록은 관리자만 할 수 있습니다.")
+        return redirect(url_for(project_list))
 
     email = request.form.get("email", "").strip()
 
@@ -88,8 +90,8 @@ def user_add_post(user: User):
 @login_required
 def password_reset(user_id: int, user: User):
     if user.id != 1:
-        flash("관리자만 사용할 수 있습니다.")
-        return redirect(url_for("project.get_list"))
+        flash("임시 비밀번호 설정은 관리자만 할 수 있습니다.")
+        return redirect(url_for(project_list))
 
     target: User = User.query.filter_by(
         id=user_id

@@ -2,6 +2,9 @@ from typing import Optional
 from typing import NamedTuple
 
 from flask import request
+from flask import flash
+from flask import redirect
+from flask import url_for
 
 
 class Device(NamedTuple):
@@ -25,6 +28,11 @@ def get_user_agent() -> str:
 
 def get_from() -> str:
     return f"({get_ip()!r}, {get_user_agent()!r})"
+
+
+def logout(message: str, category: str = "message"):
+    flash(message, category)
+    return redirect(url_for("auth.logout"))
 
 
 def response(status: bool = True, message: Optional[str] = None, payload: dict = {}) -> tuple[dict, int]:

@@ -84,9 +84,7 @@ def delete_token(token_id: int, user: User):
             message="등록된 배포 토큰이 아닙니다."
         )
 
-    if user.id == 1:
-        pass
-    elif user.id != token.owner:
+    if user.id != 1 and user.id != token.owner:
         return response(
             status=False,
             message="본인의 배포 토큰만 삭제 할 수 있습니다."

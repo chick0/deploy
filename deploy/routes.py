@@ -55,9 +55,7 @@ def upload(project: Project, token: Token):
     with open(path.path, mode="rb") as reader:
         head = reader.read(3)
 
-    if head.startswith(b"PK"):
-        pass
-    else:
+    if not head.startswith(b"PK"):
         remove_upload_path_with_deploy_id(token.owner, path.deploy.id)
         path.deploy.is_success = False
         path.deploy.message = "업로드된 파일이 zip 파일이 아닙니다."
@@ -159,9 +157,7 @@ def apply(user: User, deploy_id: int):
             message="등록된 프로젝트가 아닙니다."
         )
 
-    if user.id == 1:
-        pass
-    elif project.owner != user.id:
+    if user.id != 1 and project.owner != user.id:
         return response(
             status=False,
             message="해당 버전을 적용할 권한이 없습니다."
@@ -200,11 +196,12 @@ def tree(user: User, deploy_id: int):
             message="등록된 버전이 아닙니다."
         )
 
-    if user.id == 1:
-        pass
-    elif Token.query.filter_by(
+    if user.id != 1 and Token.query.filter_by(   # 관리자 / 토큰 주인 확인
         owner=user.id,
         project=deploy.project
+    ).count() == 0 and Project.query.filter_by(  # 프로젝트 주인 확인
+        id=deploy.project,
+        owner=user.id
     ).count() == 0:
         return response(
             status=False,
