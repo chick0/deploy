@@ -16,10 +16,10 @@ function on_click(element) {
     })
         .then((resp) => resp.json())
         .then((json) => {
-            if (json.status == false) {
-                element.classList.remove("is-loading");
-            } else {
+            if (json.status === true) {
                 document.getElementById(`token-${token_id}`).remove();
+            } else {
+                element.classList.remove("is-loading");
             }
 
             alert(json.message);

@@ -55,7 +55,6 @@ def project_detail(project_id: int, user: User):
 
     return response(
         payload={
-            "last_deploy": project.last_deploy,
             "deploy_list": [
                 {
                     "id": x.id,
@@ -63,7 +62,8 @@ def project_detail(project_id: int, user: User):
                     "created_at": x.created_at.timestamp(),
                     "is_success": x.is_success,
                     "message": x.message,
-                    "size": get_size(x.owner, x.id)
+                    "size": get_size(x.owner, x.id),
+                    "using": project.last_deploy == x.id
                 }
                 for x in deploy_list
             ]

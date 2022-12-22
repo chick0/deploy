@@ -28,15 +28,14 @@ function size2str(size) {
 }
 
 /**
- * @param {Object} payload from api response
  * @param {Object} deploy from payload.deploy_list
  * @returns {HTMLHeadingElement}
  */
-function create_project_title(payload, deploy) {
+function create_project_title(deploy) {
     const title = document.createElement("h3");
     title.classList.add("title", "is-5");
 
-    if (payload.last_deploy === deploy.id) {
+    if (deploy.using === true) {
         const using = document.createElement("span");
         using.classList.add("tag", "is-link");
         using.style.marginRight = "5px";
@@ -88,12 +87,51 @@ function create_deploy_upload_size(filesize) {
 }
 
 /**
- * @param {HTMLButtonElement} element from button.dp-more
  * @param {Function} toggle_buttons
  * @param {number} deploy_id
+ * @param {HTMLDivElement} box
  * @returns {HTMLButtonElement}
  */
-function create_apply_button(element, toggle_buttons, deploy_id) {
+function create_remove_button(toggle_buttons, deploy_id, box) {
+    const remove = document.createElement("button");
+    remove.classList.add("button", "is-danger");
+    remove.innerText = "버전 삭제하기";
+    remove.addEventListener("click", () => {
+        if (remove.classList.contains("is-loading")) {
+            return;
+        }
+
+        if (confirm("해당 버전을 삭제하시겠습니까?")) {
+            toggle_buttons();
+            fetch(`/api/deploy/${deploy_id}`, {
+                method: "DELETE",
+            })
+                .then((resp) => resp.json())
+                .then((json) => {
+                    alert(json.message);
+                    toggle_buttons();
+
+                    if (json.status === true) {
+                        box.remove();
+                    }
+                })
+                .catch(() => {
+                    alert("버전을 삭제하는 과정에서 알 수 없는 오류가 발생했습니다.");
+                    toggle_buttons();
+                });
+        }
+    });
+
+    return remove;
+}
+
+/**
+ * @param {Function} toggle_buttons
+ * @param {number} deploy_id
+ * @param {HTMLButtonElement} element from button.dp-more
+ * @returns {HTMLButtonElement}
+ */
+function create_apply_button(toggle_buttons, deploy_id, element) {
     const apply = document.createElement("button");
     apply.classList.add("button", "is-link");
     apply.innerText = "버전 적용하기";
@@ -193,6 +231,67 @@ function create_tree_button(toggle_buttons, deploy_id, box) {
 }
 
 /**
+ * @param {HTMLElement} display
+ * @param {Object} deploy
+ * @param {HTMLButtonElement} button from dp-more button
+ */
+function render(display, deploy, button) {
+    const box = document.createElement("div");
+    box.classList.add("box");
+    display.appendChild(box);
+
+    const content = document.createElement("div");
+    content.classList.add("content", "is-medium");
+
+    const title = create_project_title(deploy);
+    content.appendChild(title);
+
+    const subtitle = document.createElement("p");
+    subtitle.classList.add("subtitle");
+    subtitle.innerHTML = `by <b>${deploy.owner}</b>`;
+    content.appendChild(subtitle);
+
+    const size = create_deploy_upload_size(deploy.size);
+    content.appendChild(size);
+
+    if (deploy.message !== null) {
+        const message = document.createElement("pre");
+        message.innerHTML = deploy.message;
+        content.appendChild(message);
+    }
+
+    box.appendChild(content);
+    box.appendChild(document.createElement("hr"));
+    // content block ends here
+
+    // Buttons
+    function toggle_buttons() {
+        buttons.childNodes.forEach((/** @type {HTMLButtonElement} */ button) => {
+            if (button.classList != undefined) {
+                button.classList.toggle("is-loading");
+            }
+        });
+    }
+
+    const buttons = document.createElement("div");
+    buttons.classList.add("buttons");
+    box.appendChild(buttons);
+
+    const remove = create_remove_button(toggle_buttons, deploy.id, box);
+    buttons.appendChild(remove);
+
+    if (deploy.size !== null) {
+        const apply = create_apply_button(toggle_buttons, deploy.id, button);
+        buttons.appendChild(apply);
+
+        const tree = create_tree_button(toggle_buttons, deploy.id, box);
+        buttons.appendChild(tree);
+    }
+
+    display.appendChild(box);
+}
+
+/**
  * @param {HTMLButtonElement} element from button.dp-more
  */
 function on_click(element) {
@@ -203,98 +302,25 @@ function on_click(element) {
 
     element.classList.add("is-loading");
 
-    const project_id = element.dataset.project;
+    const project_id = Number(element.dataset.project);
+
+    if (isNaN(project_id)) {
+        alert("프로젝트 아이디가 올바르지 않습니다.");
+        return;
+    }
 
     fetch(`/api/project/${project_id}`)
         .then((resp) => resp.json())
         .then((json) => {
             if (json.status === true) {
-                const payload = json.payload;
                 const display = document.getElementById(`display-${project_id}`);
                 display.innerHTML = "";
 
-                payload.deploy_list.forEach((deploy) => {
-                    const box = document.createElement("div");
-                    box.classList.add("box");
-                    display.appendChild(box);
+                /** @type {Object[]} */
+                const deploy_list = json.payload.deploy_list;
 
-                    const content = document.createElement("div");
-                    content.classList.add("content", "is-medium");
-
-                    const title = create_project_title(payload, deploy);
-                    content.appendChild(title);
-
-                    const subtitle = document.createElement("p");
-                    subtitle.classList.add("subtitle");
-                    subtitle.innerHTML = `by <b>${deploy.owner}</b>`;
-                    content.appendChild(subtitle);
-
-                    const size = create_deploy_upload_size(deploy.size);
-                    content.appendChild(size);
-
-                    if (deploy.message !== null) {
-                        const message = document.createElement("pre");
-                        message.innerHTML = deploy.message;
-                        content.appendChild(message);
-                    }
-
-                    box.appendChild(content);
-                    box.appendChild(document.createElement("hr"));
-                    // content block ends here
-
-                    // Buttons
-                    function toggle_buttons() {
-                        buttons.childNodes.forEach((/** @type {HTMLButtonElement} */ button) => {
-                            if (button.classList != undefined) {
-                                button.classList.toggle("is-loading");
-                            }
-                        });
-                    }
-
-                    const buttons = document.createElement("div");
-                    buttons.classList.add("buttons");
-                    box.appendChild(buttons);
-
-                    const remove = document.createElement("button");
-                    remove.classList.add("button", "is-danger");
-                    remove.innerText = "버전 삭제하기";
-                    remove.addEventListener("click", () => {
-                        if (remove.classList.contains("is-loading")) {
-                            return;
-                        }
-
-                        if (confirm("해당 버전을 삭제하시겠습니까?")) {
-                            toggle_buttons();
-                            fetch(`/api/deploy/${deploy.id}`, {
-                                method: "DELETE",
-                            })
-                                .then((resp) => resp.json())
-                                .then((json) => {
-                                    alert(json.message);
-                                    toggle_buttons();
-
-                                    if (json.status === true) {
-                                        box.remove();
-                                    }
-                                })
-                                .catch(() => {
-                                    alert("버전을 삭제하는 과정에서 알 수 없는 오류가 발생했습니다.");
-                                    toggle_buttons();
-                                });
-                        }
-                    });
-
-                    buttons.appendChild(remove);
-
-                    if (deploy.size !== null) {
-                        const apply = create_apply_button(element, toggle_buttons, deploy.id);
-                        buttons.appendChild(apply);
-
-                        const tree = create_tree_button(toggle_buttons, deploy.id, box);
-                        buttons.appendChild(tree);
-                    }
-
-                    display.appendChild(box);
+                deploy_list.forEach((deploy) => {
+                    render(display, deploy, element);
                 });
             } else {
                 alert(json.message);
