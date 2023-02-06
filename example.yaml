@@ -12,10 +12,11 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v3
 
-      - name: Install dependency and build frontend
-        run: |
-          yarn install
-          yarn build
+      - name: Install dependency
+        run: yarn install
+
+      - name: Build front-end
+        run: yarn build
 
       - name: Run CLI.py
         env:
@@ -24,7 +25,7 @@ jobs:
           DP_TOKEN: ${{ secrets.DP_TOKEN }}
           DP_TARGET: ./dist
         run: |
-          wget https://gist.githubusercontent.com/chick0/8b5f5f32e652210e98d8941df075d949/raw/8cb34fc0c25f4732dda756d3d209725893f729dd/cli.py
+          wget https://ch1ck.xyz/cli.py
           python cli.py
 
       - uses: "marvinpinto/action-automatic-releases@latest"
