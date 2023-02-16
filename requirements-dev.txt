@@ -8,8 +8,6 @@ alembic==1.8.1
     # via flask-migrate
 click==8.1.3
     # via flask
-colorama==0.4.6
-    # via click
 flake8==6.0.0
     # via -r requirements-dev.in
 flask==2.2.2
@@ -52,5 +50,5 @@ sqlalchemy==1.4.44
     #   flask-sqlalchemy
 waitress==2.1.2
     # via -r requirements.in
-werkzeug==2.2.2
+werkzeug==2.2.3
     # via flask
