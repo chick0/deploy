@@ -52,5 +52,5 @@ sqlalchemy==1.4.44
     #   flask-sqlalchemy
 waitress==2.1.2
     # via -r requirements.in
-werkzeug==2.3.3
+werkzeug==3.0.1
     # via flask
