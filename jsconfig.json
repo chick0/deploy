@@ -1,7 +1,0 @@
-{
-    "compilerOptions": {
-        "module": "CommonJS",
-        "checkJs": true
-    },
-    "include": ["app/static/**/*.js"]
-}
