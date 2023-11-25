@@ -37,12 +37,12 @@ logger = getLogger()
 @bp.get("/dashboard")
 @login_required
 def dashboard(user: User):
-    p_count = Project.query.filter_by(
-        owner=user.id
+    p_count = Project.query.filter(
+        Project.owner == user.id
     ).count()
 
-    d_count = Deploy.query.filter_by(
-        owner=user.id
+    d_count = Deploy.query.filter(
+        Deploy.owner == user.id
     ).count()
 
     PATH: str = join(UPLOAD_DIR, str(user.id))
@@ -107,18 +107,21 @@ def password_update_post(user: User):
 def clean_up(user: User):
     count = 0
 
-    for deploy in Deploy.query.filter_by(
-        owner=user.id,
+    for deploy in Deploy.query.filter(
+        Deploy.owner == user.id,
     ).all():
         key = f"project.{deploy.project}.last_deploy"
         using_id = get_g_cache(key)
 
         if using_id is None:
-            project: Project = Project.query.with_entities(
+            project = Project.query.with_entities(
                 Project.last_deploy,
-            ).filter_by(
-                id=deploy.project,
+            ).filter(
+                Project.id == deploy.project,
             ).first()
+
+            if project is None:
+                raise ValueError("등록된 프로젝트가 아닙니다.")
 
             using_id = project.last_deploy
             set_g_cache(key, using_id)
@@ -143,11 +146,11 @@ def delete(user: User):
         try:
             user_id = int(request.args.get("user_id", "a"))
 
-            user = User.query.filter_by(
-                id=user_id
+            db_user = User.query.filter(
+                User.id == user_id
             ).first()
 
-            if user is None:
+            if db_user is None:
                 flash("등록된 계정이 아닙니다.")
                 return redirect(url_for("user.dashboard"))
         except ValueError:
@@ -160,22 +163,22 @@ def delete(user: User):
     delete_list = []
     delete_list.append(f"<b>{user.email}</b> 계정")
 
-    token_c = Token.query.filter_by(
-        owner=user.id
+    token_c = Token.query.filter(
+        Token.owner == user.id
     ).count()
 
     if token_c != 0:
         delete_list.append(f"<b>{token_c}개+</b>의 배포 토큰")
 
-    deploy_c = Deploy.query.filter_by(
-        owner=user.id
+    deploy_c = Deploy.query.filter(
+        Deploy.owner == user.id
     ).count()
 
     if deploy_c != 0:
         delete_list.append(f"<b>{deploy_c}개+</b>의 배포 버전")
 
-    project_list: list[Project] = Project.query.filter_by(
-        owner=user.id
+    project_list: list[Project] = Project.query.filter(
+        Deploy.owner == user.id
     ).all()
 
     for project in project_list:
@@ -197,11 +200,11 @@ def delete_post(user: User):
             by_admin = True
             user_id = int(request.args.get("user_id", "a"))
 
-            user = User.query.filter_by(
-                id=user_id
+            db_user = User.query.filter(
+                User.id == user_id
             ).first()
 
-            if user is None:
+            if db_user is None:
                 flash("등록된 계정이 아닙니다.")
                 return redirect(url_for("user.dashboard"))
         except ValueError:
@@ -211,28 +214,28 @@ def delete_post(user: User):
         flash("관리자 계정은 삭제할 수 없습니다.")
         return redirect(url_for("user.dashboard"))
 
-    for token in Token.query.filter_by(
-        owner=user.id
+    for token in Token.query.filter(
+        Token.owner == user.id
     ).all():
         db.session.delete(token)
 
-    for deploy in Deploy.query.filter_by(
-        owner=user.id
+    for deploy in Deploy.query.filter(
+        Deploy.owner == user.id
     ).all():
         db.session.delete(deploy)
 
     remove_user_path_with_user_id(user.id)
 
-    for project in Project.query.filter_by(
-        owner=user.id
+    for project in Project.query.filter(
+        Project.owner == user.id
     ).all():
-        for token in Token.query.filter_by(
-            project=project.id
+        for token in Token.query.filter(
+            Token.project == project.id
         ).all():
             db.session.delete(token)
 
-        for deploy in Deploy.query.filter_by(
-            project=project.id
+        for deploy in Deploy.query.filter(
+            Deploy.project == project.id
         ).all():
             remove_upload_path_with_deploy_id(deploy.owner, deploy.id)
             remove_unzip_path_with_deploy_id(deploy.id)

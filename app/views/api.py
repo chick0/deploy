@@ -34,13 +34,13 @@ def get_size(user_id: int, deploy_id: int) -> Optional[int]:
 @login_required
 def project_detail(project_id: int, user: User):
     if user.id == 1:
-        project: Project = Project.query.filter_by(
-            id=project_id
+        project = Project.query.filter(
+            Project.id == project_id
         ).first()
     else:
-        project: Project = Project.query.filter_by(
-            id=project_id,
-            owner=user.id
+        project = Project.query.filter(
+            Project.id == project_id,
+            Project.owner == user.id
         ).first()
 
     if project is None:
@@ -49,8 +49,8 @@ def project_detail(project_id: int, user: User):
             message="등록된 프로젝트가 아닙니다."
         )
 
-    deploy_list: list[Deploy] = Deploy.query.filter_by(
-        project=project.id
+    deploy_list: list[Deploy] = Deploy.query.filter(
+        Deploy.project == project.id
     ).all()
 
     return response(
@@ -74,8 +74,8 @@ def project_detail(project_id: int, user: User):
 @bp.delete("/token/<int:token_id>")
 @login_required
 def delete_token(token_id: int, user: User):
-    token: Token = Token.query.filter_by(
-        id=token_id,
+    token = Token.query.filter(
+        Token.id == token_id
     ).first()
 
     if token is None:

@@ -33,8 +33,8 @@ def get_list(user: User):
     if user.id == 1:
         project_list = Project.query.all()
     else:
-        project_list = Project.query.filter_by(
-            owner=user.id
+        project_list = Project.query.filter(
+            Project.owner == user.id
         ).all()
 
     if len(project_list) == 0:
@@ -44,8 +44,8 @@ def get_list(user: User):
     token_map = {}
 
     for project_id in [project.id for project in project_list]:
-        token_map[project_id] = Token.query.filter_by(
-            project=project_id
+        token_map[project_id] = Token.query.filter(
+            Token.project == project_id
         ).count()
 
     return render_template(
@@ -88,8 +88,8 @@ def create_post(user: User):
         flash("프로젝트 이름은 영어 소문자와 숫자를 포함한 일부 기호(-, _, .)만 사용할 수 있습니다.", "project.create")
         return redirect(url_for("project.create"))
 
-    if Project.query.filter_by(
-        name=name
+    if Project.query.filter(
+        Project.name == name
     ).count() != 0:
         flash("이미 사용중인 프로젝트 이름입니다.", "project.create")
         return redirect(url_for("project.create"))
@@ -109,11 +109,11 @@ def create_post(user: User):
 @bp.get("/delete/<int:project_id>")
 @login_required
 def delete(user: User, project_id: int):
-    project: Project = Project.query.with_entities(
+    project = Project.query.with_entities(
         Project.name,
         Project.owner
-    ).filter_by(
-        id=project_id
+    ).filter(
+        Project.id == project_id
     ).first()
 
     if project is None:
@@ -127,15 +127,15 @@ def delete(user: User, project_id: int):
     delete_list = []
     delete_list.append(f"<b>{project.name}</b> 프로젝트")
 
-    token_c = Token.query.filter_by(
-        project=project_id
+    token_c = Token.query.filter(
+        Token.project == project_id
     ).count()
 
     if token_c != 0:
         delete_list.append(f"<b>{token_c}개</b>의 배포 토큰")
 
-    deploy_c = Deploy.query.filter_by(
-        project=project_id
+    deploy_c = Deploy.query.filter(
+        Deploy.project == project_id
     ).count()
 
     if deploy_c != 0:
@@ -150,8 +150,8 @@ def delete(user: User, project_id: int):
 @bp.post("/delete/<int:project_id>")
 @login_required
 def delete_post(user: User, project_id: int):
-    project: Project = Project.query.filter_by(
-        id=project_id
+    project = Project.query.filter(
+        Project.id == project_id
     ).first()
 
     if project is None:
@@ -162,12 +162,12 @@ def delete_post(user: User, project_id: int):
         flash("해당 프로젝트를 삭제할 권한이 없습니다.")
         return redirect(url_for("project.get_list"))
 
-    token_d = Token.query.filter_by(
-        project=project.id
+    token_d = Token.query.filter(
+        Token.project == project.id
     ).delete()
 
-    deploy_list: list[Deploy] = Deploy.query.filter_by(
-        project=project.id
+    deploy_list: list[Deploy] = Deploy.query.filter(
+        Deploy.project == project.id
     ).all()
 
     for deploy in deploy_list:

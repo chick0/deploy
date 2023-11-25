@@ -59,8 +59,8 @@ def auth_required(f):
 
         ########################################################
 
-        project: Project = Project.query.filter_by(
-            name=name
+        project = Project.query.filter(
+            Project.name == name
         ).first()
 
         if project is None:
@@ -71,9 +71,9 @@ def auth_required(f):
 
         ########################################################
 
-        tk: Token = Token.query.filter_by(
-            project=project.id,
-            token=token
+        tk = Token.query.filter(
+            Token.project == project.id,
+            Token.token == token
         ).first()
 
         if tk is None:

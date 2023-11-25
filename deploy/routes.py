@@ -86,8 +86,8 @@ def upload(project: Project, token: Token):
 @bp.delete("/<int:deploy_id>")
 @login_required
 def delete(user: User, deploy_id: int):
-    deploy: Deploy = Deploy.query.filter_by(
-        id=deploy_id
+    deploy = Deploy.query.filter(
+        Deploy.id == deploy_id
     ).first()
 
     if deploy is None:
@@ -96,9 +96,12 @@ def delete(user: User, deploy_id: int):
             message="등록된 버전이 아닙니다."
         )
 
-    project: Project = Project.query.filter_by(
-        id=deploy.project
+    project = Project.query.filter(
+        Project.id == deploy.project
     ).first()
+
+    if project is None:
+        raise ValueError("등록된 프로젝트가 아닙니다.")
 
     if project.last_deploy == deploy.id:
         return response(
@@ -132,8 +135,8 @@ def delete(user: User, deploy_id: int):
 @bp.post("/<int:deploy_id>")
 @login_required
 def apply(user: User, deploy_id: int):
-    deploy: Deploy = Deploy.query.filter_by(
-        id=deploy_id
+    deploy = Deploy.query.filter(
+        Deploy.id == deploy_id
     ).first()
 
     if deploy is None:
@@ -148,8 +151,8 @@ def apply(user: User, deploy_id: int):
             message="성공한 버전만 적용할 수 있습니다."
         )
 
-    project: Project = Project.query.filter_by(
-        id=deploy.project
+    project = Project.query.filter(
+        Project.id == deploy.project
     ).first()
 
     if project is None:
@@ -187,8 +190,8 @@ def apply(user: User, deploy_id: int):
 @bp.get("/<int:deploy_id>/tree")
 @login_required
 def tree(user: User, deploy_id: int):
-    deploy: Deploy = Deploy.query.filter_by(
-        id=deploy_id
+    deploy = Deploy.query.filter(
+        Deploy.id == deploy_id
     ).first()
 
     if deploy is None:
@@ -197,12 +200,12 @@ def tree(user: User, deploy_id: int):
             message="등록된 버전이 아닙니다."
         )
 
-    if user.id != 1 and Token.query.filter_by(   # 관리자 / 토큰 주인 확인
-        owner=user.id,
-        project=deploy.project
-    ).count() == 0 and Project.query.filter_by(  # 프로젝트 주인 확인
-        id=deploy.project,
-        owner=user.id
+    if user.id != 1 and Token.query.filter(   # 관리자 / 토큰 주인 확인
+        Token.owner == user.id,
+        Token.project == deploy.project
+    ).count() == 0 and Project.query.filter(  # 프로젝트 주인 확인
+        Token.id == deploy.project,
+        Token.owner == user.id
     ).count() == 0:
         return response(
             status=False,
@@ -248,8 +251,8 @@ def tree(user: User, deploy_id: int):
 @bp.get("/<int:deploy_id>/download")
 @login_required
 def download(user: User, deploy_id: int):
-    deploy: Deploy = Deploy.query.filter_by(
-        id=deploy_id
+    deploy = Deploy.query.filter(
+        Deploy.id == deploy_id
     ).first()
 
     if deploy is None:
@@ -258,12 +261,12 @@ def download(user: User, deploy_id: int):
             message="등록된 버전이 아닙니다."
         )
 
-    if user.id != 1 and Token.query.filter_by(   # 관리자 / 토큰 주인 확인
-        owner=user.id,
-        project=deploy.project
-    ).count() == 0 and Project.query.filter_by(  # 프로젝트 주인 확인
-        id=deploy.project,
-        owner=user.id
+    if user.id != 1 and Token.query.filter(   # 관리자 / 토큰 주인 확인
+        Token.owner == user.id,
+        Token.project == deploy.project,
+    ).count() == 0 and Project.query.filter(  # 프로젝트 주인 확인
+        Project.id == deploy.project,
+        Project.owner == user.id
     ).count() == 0:
         return response(
             status=False,

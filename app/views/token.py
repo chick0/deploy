@@ -26,8 +26,8 @@ def get_list(user: User):
     if user.id == 1:
         token_list: list[Token] = Token.query.all()
     else:
-        token_list: list[Token] = Token.query.filter_by(
-            owner=user.id
+        token_list: list[Token] = Token.query.filter(
+            Token.owner == user.id
         ).all()
 
     if len(token_list) == 0:
@@ -45,8 +45,8 @@ def create(user: User):
     if user.id == 1:
         project_list: list[Project] = Project.query.all()
     else:
-        project_list: list[Project] = Project.query.filter_by(
-            owner=user.id
+        project_list: list[Project] = Project.query.filter(
+            Project.owner == user.id
         ).all()
 
     if len(project_list) == 0:
@@ -85,12 +85,15 @@ def create_post(user: User):
             flash("배포 토큰 만료 날짜가 올바르지 않습니다.", "token-create")
             return redirect(url_for("token.create"))
 
-    project: Project = Project.query.with_entities(
+    project = Project.query.with_entities(
         Project.id,
         Project.owner
-    ).filter_by(
-        id=project_id
+    ).filter(
+        Project.id == project_id
     ).first()
+
+    if project is None:
+        raise ValueError("등록된 프로젝트가 아닙니다.")
 
     if user.id != 1 and user.id != project.owner:
         flash("배포 토큰을 생성할 권한이 없습니다.", "token-create")

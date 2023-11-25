@@ -10,8 +10,8 @@ from .utils import logout
 
 
 def get_user(user_id: int) -> Optional[User]:
-    return User.query.filter_by(
-        id=user_id,
+    return User.query.filter(
+        User.id == user_id
     ).first()
 
 

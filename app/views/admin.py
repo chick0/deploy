@@ -61,8 +61,8 @@ def user_add_post(user: User):
         flash("입력한 이메일이 올바르지 않습니다.", "user-add")
         return redirect(url_for("admin.user_add"))
 
-    if User.query.filter_by(
-        email=email
+    if User.query.filter(
+        User.email == email
     ).count() != 0:
         flash("사용중인 이메일입니다.", "user-add")
         return redirect(url_for("admin.user_add"))
@@ -93,9 +93,13 @@ def password_reset(user_id: int, user: User):
         flash("임시 비밀번호 설정은 관리자만 할 수 있습니다.")
         return redirect(url_for(project_list))
 
-    target: User = User.query.filter_by(
-        id=user_id
+    target = User.query.filter(
+        User.id == user_id
     ).first()
+
+    if target is None:
+        flash("등록된 사용자가 아닙니다.")
+        return redirect(url_for(project_list))
 
     password = token_bytes(16).hex()
 

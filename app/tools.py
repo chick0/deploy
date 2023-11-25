@@ -21,10 +21,10 @@ def get_project_name(project_id: int) -> str:
     name = get_g_cache(key)
 
     if name is None:
-        project: Project = Project.query.with_entities(
+        project = Project.query.with_entities(
             Project.name,
-        ).filter_by(
-            id=project_id
+        ).filter(
+            Project.id == project_id
         ).first()
 
         if project is None:
@@ -41,11 +41,14 @@ def get_user_email(user_id: int) -> str:
     email = get_g_cache(key)
 
     if email is None:
-        user: User = User.query.with_entities(
+        user = User.query.with_entities(
             User.email
-        ).filter_by(
-            id=user_id
+        ).filter(
+            User.id == user_id
         ).first()
+
+        if user is None:
+            raise ValueError("등록된 유저가 아닙니다.")
 
         email = user.email
         set_g_cache(key, email)
@@ -58,11 +61,14 @@ def get_deploy_created_at(deploy_id: int):
     created_at = get_g_cache(key)
 
     if created_at is None:
-        deploy: Deploy = Deploy.query.with_entities(
+        deploy = Deploy.query.with_entities(
             Deploy.created_at
-        ).filter_by(
-            id=deploy_id
+        ).filter(
+            Deploy.id == deploy_id
         ).first()
+
+        if deploy is None:
+            raise ValueError("등록된 배포 정보가 아닙니다.")
 
         created_at = deploy.created_at
         set_g_cache(key, created_at)

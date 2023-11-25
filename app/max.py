@@ -17,8 +17,8 @@ def check_project_max(f):
     def decorator(*args, **kwargs):
         user: User = kwargs['user']
 
-        count = Project.query.filter_by(
-            owner=user.id
+        count: int = Project.query.filter(
+            Project.owner == user.id
         ).count()
 
         PROJECT_MAX = app.config['PROJECT_MAX']
@@ -38,9 +38,9 @@ def check_deploy_max(f):
         project: Project = kwargs['project']
         token: Token = kwargs['token']
 
-        count = Deploy.query.filter_by(
-            owner=token.owner,
-            project=project.id,
+        count = Deploy.query.filter(
+            Deploy.owner == token.owner,
+            Deploy.project == project.id,
         ).count()
 
         DEPLOY_MAX = app.config['DEPLOY_MAX']

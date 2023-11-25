@@ -56,9 +56,9 @@ def login_post():
         flash("비밀번호를 입력해야합니다.", "login")
         return redirect(url_for("auth.login"))
 
-    user: User = User.query.filter_by(
-        email=email.strip(),
-        password=sha512(password.encode()).hexdigest()
+    user = User.query.filter(
+        User.email == email.strip(),
+        User.password == sha512(password.encode()).hexdigest()
     ).first()
 
     if user is None:
@@ -105,10 +105,13 @@ def password_update_post():
         flash("로그인이 필요합니다.")
         return redirect(url_for("auth.login"))
 
-    user: User = User.query.filter_by(
-        id=user_id,
-        email=email
+    user = User.query.filter(
+        User.id == user_id,
+        User.email == email
     ).first()
+
+    if user is None:
+        raise ValueError("등록된 유저가 아닙니다.")
 
     password = request.form.get("password", "")
 
