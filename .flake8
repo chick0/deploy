@@ -1,9 +1,4 @@
 [flake8]
-exclude =
-    .git,
-    .github,
-    .vscode,
-    __pycache__,
-    migrations,
-    venv,
+ignore = E711,E712,F403,F405
 max-line-length = 120
+exclude = migrations/*

@@ -25,4 +25,4 @@ jobs:
 
       - name: Analysing the code with Ruff
         run: |
-          ruff check ./
+          ruff check -v $(git ls-files "*.py")

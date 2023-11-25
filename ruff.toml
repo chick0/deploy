@@ -1,0 +1,12 @@
+ignore = ["E711", "E712", "F403", "F405"]
+
+line-length = 120  
+indent-width = 4
+
+target-version = "py310"
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "lf"
