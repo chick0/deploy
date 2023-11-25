@@ -6,7 +6,6 @@ from logging import getLogger
 from datetime import datetime
 
 from flask import Blueprint
-from flask import current_app as app
 from flask import request
 from flask import flash
 from flask import render_template
@@ -18,11 +17,11 @@ from ..models import User
 from ..models import Project
 from ..models import Token
 from ..models import Deploy
+from ..const import PROJECT_MAX
+from ..const import DEPLOY_MAX
 from ..user import login_required
 from ..utils import get_from
 from ..utils import logout
-from ..tools import get_g_cache
-from ..tools import set_g_cache
 from deploy import UPLOAD_DIR
 from deploy import create_dir
 from deploy.remove import remove_user_path_with_user_id
@@ -56,8 +55,8 @@ def dashboard(user: User):
         "user/dashboard.jinja2",
         user=user,
         using_size=using_size,
-        p_count_per=int(p_count / app.config['PROJECT_MAX'] * 100),
-        d_count_per=int(d_count / app.config['DEPLOY_MAX'] * 100)
+        p_count_per=int(p_count / PROJECT_MAX * 100),
+        d_count_per=int(d_count / DEPLOY_MAX * 100)
     )
 
 
@@ -110,23 +109,16 @@ def clean_up(user: User):
     for deploy in Deploy.query.filter(
         Deploy.owner == user.id,
     ).all():
-        key = f"project.{deploy.project}.last_deploy"
-        using_id = get_g_cache(key)
+        project = Project.query.with_entities(
+            Project.last_deploy,
+        ).filter(
+            Project.id == deploy.project,
+        ).first()
 
-        if using_id is None:
-            project = Project.query.with_entities(
-                Project.last_deploy,
-            ).filter(
-                Project.id == deploy.project,
-            ).first()
+        if project is None:
+            raise ValueError("등록된 프로젝트가 아닙니다.")
 
-            if project is None:
-                raise ValueError("등록된 프로젝트가 아닙니다.")
-
-            using_id = project.last_deploy
-            set_g_cache(key, using_id)
-
-        if deploy.id != using_id:
+        if deploy.id != project.last_deploy:
             remove_upload_path_with_deploy_id(user.id, deploy.id)
             logger.info(f"Deploy id {deploy.id} is deleted by {user.id} from {get_from()}")
 

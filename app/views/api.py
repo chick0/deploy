@@ -12,7 +12,6 @@ from ..models import Deploy
 from ..user import login_required
 from ..utils import get_from
 from ..utils import response
-from ..tools import get_user_email
 from deploy import routes
 from deploy.path import upload_path_with_deploy_id
 from deploy.utils import auth_required
@@ -58,7 +57,7 @@ def project_detail(project_id: int, user: User):
             "deploy_list": [
                 {
                     "id": x.id,
-                    "owner": get_user_email(x.owner),
+                    "owner": x.owner,
                     "created_at": x.created_at.timestamp(),
                     "is_success": x.is_success,
                     "message": x.message,

@@ -1,0 +1,48 @@
+{% if max_page <= 1 %}
+{# max_page가 1보다 작으면 페이지 블록을 생성하지 않음 #}
+{% else %}
+<div class="overflow-x-auto">
+    <ul class="pagination">
+        {% if page == 1 %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#" title="이전 페이지가 없습니다.">&laquo;</a>
+            </li>
+        {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page - 1 }}" title="이전 페이지">&laquo;</a>
+            </li>
+        {% endif %}
+
+        {% set start_page = 1 %}
+        {% if page != 1 %}
+            {% set start_page = page - 7 %}
+
+            {% if start_page < 1 %}
+                {% set start_page = 1 %}
+            {% endif %}
+        {% endif %}
+
+        {% set end_page = start_page + 15 %}
+        {% if end_page > max_page %}
+            {% set end_page = max_page %}
+        {% endif %}
+
+        {% for i in range(start_page, end_page + 1) %}
+            {% if i == page %}
+                {% set active = " active" %}
+            {% endif %}
+            <li class="page-item{{active}}"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+        {% endfor %}
+
+        {% if page == max_page %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#" title="다음 페이지가 없습니다.">&raquo;</a>
+            </li>
+        {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page + 1 }}" title="다음 페이지">&raquo;</a>
+            </li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}

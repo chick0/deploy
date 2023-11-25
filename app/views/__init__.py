@@ -6,6 +6,7 @@ __all__ = [
     "auth",
     "index",
     "project",
+    "projects",
     "token",
     "user",
 ]

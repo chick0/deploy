@@ -1,6 +1,5 @@
 from functools import wraps
 
-from flask import current_app as app
 from flask import flash
 from flask import redirect
 from flask import url_for
@@ -9,6 +8,8 @@ from .models import User
 from .models import Project
 from .models import Token
 from .models import Deploy
+from .const import PROJECT_MAX
+from .const import DEPLOY_MAX
 from .utils import response
 
 
@@ -21,11 +22,9 @@ def check_project_max(f):
             Project.owner == user.id
         ).count()
 
-        PROJECT_MAX = app.config['PROJECT_MAX']
-
         if count >= PROJECT_MAX:
             flash(f"{PROJECT_MAX}개보다 많은 프로젝트를 생성할 수 없습니다.")
-            return redirect(url_for("project.get_list"))
+            return redirect(url_for("projects.show"))
 
         return f(*args, **kwargs)
 
@@ -42,8 +41,6 @@ def check_deploy_max(f):
             Deploy.owner == token.owner,
             Deploy.project == project.id,
         ).count()
-
-        DEPLOY_MAX = app.config['DEPLOY_MAX']
 
         if count >= DEPLOY_MAX:
             return response(

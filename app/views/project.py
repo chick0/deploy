@@ -29,7 +29,7 @@ RE = compile(r"^[a-z0-9-._]+$")
 
 @bp.get("/list")
 @login_required
-def get_list(user: User):
+def list(user: User):
     if user.id == 1:
         project_list = Project.query.all()
     else:
@@ -103,7 +103,7 @@ def create_post(user: User):
     db.session.commit()
 
     logger.info(f"Project id {project.id} and name {project.name} is created from {get_from()}")
-    return redirect(url_for("project.get_list") + f"#project-{project.id}")
+    return redirect(url_for("projects.show") + f"#project-{project.id}")
 
 
 @bp.get("/delete/<int:project_id>")
@@ -118,11 +118,11 @@ def delete(user: User, project_id: int):
 
     if project is None:
         flash("등록된 프로젝트가 아닙니다.")
-        return redirect(url_for("project.get_list"))
+        return redirect(url_for("projects.show"))
 
     if user.id != 1 and user.id != project.owner:
         flash("해당 프로젝트를 삭제할 권한이 없습니다.")
-        return redirect(url_for("project.get_list"))
+        return redirect(url_for("projects.show"))
 
     delete_list = []
     delete_list.append(f"<b>{project.name}</b> 프로젝트")
@@ -156,11 +156,11 @@ def delete_post(user: User, project_id: int):
 
     if project is None:
         flash("등록된 프로젝트가 아닙니다.")
-        return redirect(url_for("project.get_list"))
+        return redirect(url_for("projects.show"))
 
     if user.id != 1 and user.id != project.owner:
         flash("해당 프로젝트를 삭제할 권한이 없습니다.")
-        return redirect(url_for("project.get_list"))
+        return redirect(url_for("projects.show"))
 
     token_d = Token.query.filter(
         Token.project == project.id
@@ -184,4 +184,4 @@ def delete_post(user: User, project_id: int):
     logger.info(f"Project id {project.id} and name {project.name} is deleted {delete_status} from {get_from()}")
 
     flash(f"<b>{project.name}</b> 프로젝트가 삭제되었습니다.", "success")
-    return redirect(url_for("project.get_list"))
+    return redirect(url_for("projects.show"))

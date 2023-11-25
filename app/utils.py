@@ -41,3 +41,17 @@ def response(status: bool = True, message: Optional[str] = None, payload: dict =
         "message": message,
         "payload": payload
     }, 200 if status is True else 400
+
+
+def get_page(name: str = "page", min: int = 0) -> int:
+    page = request.args.get(name, "None")
+
+    try:
+        page = int(page) - 1
+
+        if page < min:
+            return min
+    except ValueError:
+        return min
+
+    return page

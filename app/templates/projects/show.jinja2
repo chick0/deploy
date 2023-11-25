@@ -1,0 +1,35 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">프로젝트 목록</h1>
+    <p class="lead">총 {{ project_count }}개의 프로젝트가 등록되어있습니다.</p>
+
+    {% include "lib/flash.jinja2" %}
+
+    {% include "lib/page.jinja2" %}
+
+    <div class="row row-cols-xl-4 row-cols-md-2 row-cols-1">
+        {% for project in project_list %}
+            <div class="col">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <a class="d-block text-reset text-decoration-none" href="/projects/{{ project.id }}/detail" title="자세히 보기">
+                            <h3>{{ project.name|e }}</h3>
+                            <p class="lead mb-0">{{ project.email|e }}</p>
+                        </a>
+                    </div>
+                    <div class="card-footer">
+                        {% if project.deployed_at is none %}
+                            <b class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> 경고</b> 배포 정보가 없습니다.
+                        {% else %}
+                            배포 버전: <b>{{ project.deployed_at }}</b>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% include "lib/page.jinja2" %}
+</div>
+{% endblock %}

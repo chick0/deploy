@@ -51,6 +51,6 @@ def login_not_required(f):
         if user is None or user.password != user_password:
             return f(*args, **kwargs)
 
-        return redirect(url_for("project.get_list"))
+        return redirect(url_for("projects.show"))
 
     return decorator

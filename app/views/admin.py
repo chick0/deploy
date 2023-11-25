@@ -18,7 +18,7 @@ from ..utils import get_from
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 logger = getLogger()
 
-project_list = "project.get_list"
+project_list = "projects.show"
 
 
 @bp.get("/user-list")
