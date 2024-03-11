@@ -3,6 +3,7 @@ from typing import NamedTuple
 from datetime import datetime
 from functools import wraps
 from zipfile import ZipFile
+from hashlib import sha384
 from logging import getLogger
 
 from flask import request
@@ -71,9 +72,12 @@ def auth_required(f):
 
         ########################################################
 
+        token_bytes = bytes.fromhex(token)
+        token_hash = sha384(token_bytes).hexdigest()
+
         tk = Token.query.filter(
             Token.project == project.id,
-            Token.token == token
+            Token.token == token_hash
         ).first()
 
         if tk is None:
