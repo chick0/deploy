@@ -1,58 +1,58 @@
 {% extends "layout.jinja2" %}
-{% block head %}
-<style>
-    th, td {
-        word-break: keep-all;
-        white-space: nowrap;
-    }
-</style>
-{% endblock %}
 {% block content %}
-<div class="section">
-    <div class="container">
-        <h1 class="title is-1 has-text-centered">계정 목록</h1>
-        <div class="buttons is-centered">
-            <a class="button is-link is-medium" href="{{ url_for('admin.user_add') }}">계정 등록</a>
-        </div>
+<div class="container-fluid mb-3">
+    <h1 class="mt-4">계정 목록</h1>
+    <div class="d-flex gap-2">
+        <a class="btn btn-primary" href="/admin/user-add">계정 등록</a>
+    </div>
 
-        <div class="table-container">
-            <table class="table is-hoverable is-fullwidth">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Email</th>
-                        <th>등록 날짜</th>
-                        <th>마지막 로그인</th>
-                        <th>비밀번호 수정</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in user_list %}
-                        <tr id="user-{{ user.id }}">
-                            <td>{{ user.id }}</td>
-                            <td>
+    {% include "lib/flash.jinja2" %}
+</div>
+
+<div class="container-fluid">
+    <div class="table-responsive">
+        <table class="table table-bordered" id="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>등록 날짜</th>
+                    <th>마지막 로그인</th>
+                    <th>비밀번호 수정</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in user_list %}
+                    <tr id="user-{{ user.id }}">
+                        <td>{{ user.id }}</td>
+                        <td>
+                            <p class="mb-2">
                                 {% if user.id == 1 %}
-                                    <span class="tag is-danger">관리자</span>
+                                    <span class="badge text-bg-danger">관리자</span>
                                 {% endif %}
-
                                 {{ user.email }}
-                                <div class="buttons mt-2">
-                                    <button class="button is-warning ask-reset" data-href="{{ url_for('admin.password_reset', user_id=user.id) }}">임시 비밀번호 설정</button>
-                                    {% if user.id != 1 %}
-                                        <a class="button is-danger" href="{{ url_for('user.delete', user_id=user.id) }}">계정 삭제</a>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td>{{ user.created_at }}</td>
-                            <td>{{ user.last_login_at }}</td>
-                            <td>{{ user.password_updated_at }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                            </p>
+
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary btn-sm ask-reset" data-href="/admin/user/{{ user.id }}/password-reset">임시 비밀번호 설정</button>
+                                {% if user.id != 1 %}
+                                    <a class="btn btn-danger btn-sm" href="/admin/user/{{ user.id }}/delete">계정 삭제</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>{{ user.created_at }}</td>
+                        <td>{{ user.last_login_at }}</td>
+                        <td>{{ user.password_updated_at }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
 <script src="{{ url_for('static', filename='ask-reset.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/gh/chick0/table@v1.1.2/src/index.min.js"></script>
+<script>
+    const table = new Table("table")
+</script>
 {% endblock %}

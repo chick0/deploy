@@ -13,7 +13,7 @@ from app.models import Token
 from app.models import Deploy
 from app.utils import get_from
 from app.utils import response
-from app.views.project import RE
+from app.views.projects import RE
 from . import create_dir
 from .path import upload_path_with_deploy_id
 from .path import unzip_path_with_deploy_id

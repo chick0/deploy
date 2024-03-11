@@ -6,6 +6,7 @@ from datetime import datetime
 from flask import Blueprint
 from flask import request
 from flask import flash
+from flask import abort
 from flask import redirect
 from flask import url_for
 from flask import render_template
@@ -14,6 +15,7 @@ from .. import db
 from ..models import User
 from ..user import login_required
 from ..utils import get_from
+from ..utils import delete_user_from_system
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 logger = getLogger()
@@ -86,7 +88,7 @@ def user_add_post(user: User):
     )
 
 
-@bp.get("/password-reset/<int:user_id>")
+@bp.get("/user/<int:user_id>/password-reset")
 @login_required
 def password_reset(user_id: int, user: User):
     if user.id != 1:
@@ -116,3 +118,29 @@ def password_reset(user_id: int, user: User):
         email=target.email,
         password=password
     )
+
+
+@bp.get("/user/<int:user_id>/delete")
+@login_required
+def user_delete(user: User, user_id: int):
+    if user.id != 1:
+        return abort(404)
+
+    if user_id == 1:
+        flash("관리자 계정은 삭제할 수 없습니다.")
+        return redirect("/admin/user-list")
+
+    db_user = User.query.filter(
+        User.id == user_id
+    ).first()
+
+    if db_user is None:
+        flash("등록된 계정이 아닙니다.")
+        return redirect("/admin/user-list")
+
+    delete_user_from_system(db_user)
+    flash("계정이 삭제되었습니다.")
+
+    logger.info(f"User id {user.id} is deleted by admin from {get_from()}")
+
+    return redirect(url_for("admin.user_list"))

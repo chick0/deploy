@@ -139,7 +139,7 @@ def detail(user: User, project_id: int):
         Project.id == project_id
     ).with_entities(
         User.email,
-
+        Project.owner,
         Project.name,
         Project.created_at,
         Project.last_deploy,

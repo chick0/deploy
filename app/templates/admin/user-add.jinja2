@@ -1,43 +1,23 @@
 {% extends "layout.jinja2" %}
 {% block content %}
-<div class="section">
-    <div class="container">
-        <h1 class="title is-1 has-text-centered">계정 등록</h1>
+<div class="container-fluid px-4 mb-5">
+    <h1 class="mt-4">계정 등록</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">계정 등록</li>
+            <li class="breadcrumb-item active">이메일 입력</li>
+        </ol>
+    </nav>
 
-        <div class="columns is-centered">
-            <div class="column is-one-third">
-                {% for message in get_flashed_messages(category_filter=["user-add"]) %}
-                    <div class="message is-danger">
-                        <div class="message-header">
-                            <p>계정 등록 실패</p>
-                        </div>
-                        <div class="message-body">
-                            {{ message }}
-                        </div>
-                    </div>
-                {% endfor %}
+    {% include "lib/flash.jinja2" %}
 
-                <form class="box" method="post">
-                    <div class="field">
-                        <label class="label">이메일</label>
-                        <div class="control has-icons-left">
-                            <input class="input" type="email" placeholder="이메일" name="email" required>
-                            <span class="icon is-small is-left">
-                                <i class="fas fa-envelope"></i>
-                            </span>
-                        </div>
-                    </div>
-
-                    <br>
-
-                    <div class="field has-text-right">
-                        <div class="control">
-                            <button class="button is-link is-medium" type="submit">계정 등록</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+    <form method="post">
+        <div class="mb-3">
+            <label for="email" class="form-label"><i class="fas fa-envelope me-1"></i> 이메일</label>
+            <input id="email" class="form-control" type="email" placeholder="이메일" name="email" required>
         </div>
-    </div>
+
+        <button class="btn btn-primary" type="submit">계정 등록</button>
+    </form>
 </div>
 {% endblock %}

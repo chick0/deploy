@@ -2,13 +2,11 @@ from os import environ
 from sys import argv
 from importlib import import_module
 
-from flask import g
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from .const import VERSION
 from .key import get_key
 
 db = SQLAlchemy()
@@ -39,10 +37,6 @@ def create_app():
     migrate.init_app(app, db)
 
     app.config['SECRET_KEY'] = get_key()
-
-    @app.before_request
-    def before_request():
-        g.VERSION = VERSION
 
     from . import views
     for view in [getattr(views, x) for x in views.__all__]:

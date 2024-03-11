@@ -2,9 +2,19 @@ from typing import Optional
 from typing import NamedTuple
 
 from flask import request
+from flask import session
 from flask import flash
 from flask import redirect
-from flask import url_for
+
+from . import db
+from .models import User
+from .models import Project
+from .models import Deploy
+from .models import Token
+from deploy.remove import remove_user_path_with_user_id
+from deploy.remove import remove_upload_path_with_deploy_id
+from deploy.remove import remove_unzip_path_with_deploy_id
+from deploy.remove import remove_project_path_with_name
 
 
 class Device(NamedTuple):
@@ -31,8 +41,11 @@ def get_from() -> str:
 
 
 def logout(message: str, category: str = "message"):
+    for key in list(session.keys()):
+        del session[key]
+
     flash(message, category)
-    return redirect(url_for("auth.logout"))
+    return redirect("/")
 
 
 def response(status: bool = True, message: Optional[str] = None, payload: dict = {}) -> tuple[dict, int]:
@@ -55,3 +68,38 @@ def get_page(name: str = "page", min: int = 0) -> int:
         return min
 
     return page
+
+
+def delete_user_from_system(user: User):
+    for token in Token.query.filter(
+        Token.owner == user.id
+    ).all():
+        db.session.delete(token)
+
+    for deploy in Deploy.query.filter(
+        Deploy.owner == user.id
+    ).all():
+        db.session.delete(deploy)
+
+    remove_user_path_with_user_id(user.id)
+
+    for project in Project.query.filter(
+        Project.owner == user.id
+    ).all():
+        for token in Token.query.filter(
+            Token.project == project.id
+        ).all():
+            db.session.delete(token)
+
+        for deploy in Deploy.query.filter(
+            Deploy.project == project.id
+        ).all():
+            remove_upload_path_with_deploy_id(deploy.owner, deploy.id)
+            remove_unzip_path_with_deploy_id(deploy.id)
+            db.session.delete(deploy)
+
+        remove_project_path_with_name(project.name)
+        db.session.delete(project)
+
+    db.session.delete(user)
+    db.session.commit()

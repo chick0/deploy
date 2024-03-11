@@ -2,16 +2,20 @@
     <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
         <div class="sb-sidenav-menu">
             <div class="nav">
+                {# 로그인 #}
                 {% if session['user.id'] %}
-                    <div class="sb-sidenav-menu-heading">관리자</div>
-                    <a class="nav-link" href="/project/create">
-                        <div class="sb-nav-link-icon"><i class="fas fa-add"></i></div>
-                        사용자 등록
-                    </a>
-                    <a class="nav-link" href="/project/list">
-                        <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
-                        사용자 목록
-                    </a>
+                    {# 관리자 #}
+                    {% if session['user.id'] == 1 %}
+                        <div class="sb-sidenav-menu-heading">관리자</div>
+                        <a class="nav-link" href="/admin/user-add">
+                            <div class="sb-nav-link-icon"><i class="fas fa-add"></i></div>
+                            계정 등록
+                        </a>
+                        <a class="nav-link" href="/admin/user-list">
+                            <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
+                            계정 목록
+                        </a>
+                    {% endif %}
 
                     <div class="sb-sidenav-menu-heading">프로젝트</div>
                     <a class="nav-link" href="/projects/create">
@@ -23,19 +27,17 @@
                         프로젝트 목록
                     </a>
 
-                    <div class="sb-sidenav-menu-heading">토큰</div>
+                    {# <div class="sb-sidenav-menu-heading">토큰</div>
                     <a class="nav-link" href="/token/list">
                         <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
                         토큰 목록
-                    </a>
+                    </a> #}
 
-                    <div class="sb-sidenav-menu-heading">가이드</div>
+                    {# <div class="sb-sidenav-menu-heading">가이드</div>
                     <a class="nav-link" href="/guide/setup">
                         <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
                         배포 설정하기
-                    </a>
-
-
+                    </a> #}
                 {% else %}
                     <div class="sb-sidenav-menu-heading">계정</div>
                     <a class="nav-link" href="/auth/login">

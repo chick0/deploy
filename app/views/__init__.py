@@ -5,7 +5,6 @@ __all__ = [
     "api",
     "auth",
     "index",
-    "project",
     "projects",
     "token",
     "user",

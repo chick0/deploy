@@ -6,8 +6,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         {# meta tag #}
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="robots" content="noindex">
-        <title>배포 시스템</title>
+        <meta name="robots" content="noindex,nofollow">
+        <title>Deploy</title>
         {# css #}
         <link rel="stylesheet" as="style" href="/static/css/style.min.css">
         <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable-dynamic-subset.css">
@@ -26,15 +26,7 @@
                 {% block content %}{% endblock %}
 
                 {# 공통 빈공간 #}
-                <div class="mb-4"></div>
-
-                <footer class="py-4 bg-secondary-subtle mt-auto">
-                    <div class="container-fluid px-4">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="text-body-secondary">시스템 버전 <b>{{ g.VERSION }}</b></div>
-                        </div>
-                    </div>
-                </footer>
+                <div class="mt-auto mb-4"></div>
             </div>
         </div>
 

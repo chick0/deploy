@@ -22,12 +22,10 @@ from ..const import DEPLOY_MAX
 from ..user import login_required
 from ..utils import get_from
 from ..utils import logout
+from ..utils import delete_user_from_system
 from deploy import UPLOAD_DIR
 from deploy import create_dir
-from deploy.remove import remove_user_path_with_user_id
 from deploy.remove import remove_upload_path_with_deploy_id
-from deploy.remove import remove_unzip_path_with_deploy_id
-from deploy.remove import remove_project_path_with_name
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 logger = getLogger()
@@ -185,66 +183,6 @@ def delete(user: User):
 @bp.post("/delete")
 @login_required
 def delete_post(user: User):
-    by_admin = False
-
-    if user.id == 1:
-        try:
-            by_admin = True
-            user_id = int(request.args.get("user_id", "a"))
-
-            db_user = User.query.filter(
-                User.id == user_id
-            ).first()
-
-            if db_user is None:
-                flash("등록된 계정이 아닙니다.")
-                return redirect(url_for("user.dashboard"))
-        except ValueError:
-            pass
-
-    if user.id == 1:
-        flash("관리자 계정은 삭제할 수 없습니다.")
-        return redirect(url_for("user.dashboard"))
-
-    for token in Token.query.filter(
-        Token.owner == user.id
-    ).all():
-        db.session.delete(token)
-
-    for deploy in Deploy.query.filter(
-        Deploy.owner == user.id
-    ).all():
-        db.session.delete(deploy)
-
-    remove_user_path_with_user_id(user.id)
-
-    for project in Project.query.filter(
-        Project.owner == user.id
-    ).all():
-        for token in Token.query.filter(
-            Token.project == project.id
-        ).all():
-            db.session.delete(token)
-
-        for deploy in Deploy.query.filter(
-            Deploy.project == project.id
-        ).all():
-            remove_upload_path_with_deploy_id(deploy.owner, deploy.id)
-            remove_unzip_path_with_deploy_id(deploy.id)
-            db.session.delete(deploy)
-
-        remove_project_path_with_name(project.name)
-        db.session.delete(project)
-
-    db.session.delete(user)
-    db.session.commit()
-
-    if by_admin:
-        logger.info(f"User id {user.id} is deleted by admin from {get_from()}")
-
-        flash("계정이 삭제되었습니다.", "success")
-        return redirect(url_for("admin.user_list"))
-    else:
-        logger.info(f"User id {user.id} is deleted from {get_from()}")
-
-        return logout("계정이 삭제되었습니다.", "success")
+    delete_user_from_system(user)
+    logger.info(f"User id {user.id} is deleted from {get_from()}")
+    return logout("계정이 삭제되었습니다.", "success")

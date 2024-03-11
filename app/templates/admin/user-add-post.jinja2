@@ -1,25 +1,31 @@
 {% extends "layout.jinja2" %}
 {% block content %}
-<div class="section">
-    <div class="container">
-        <h1 class="title is-1 has-text-centered">계정 등록</h1>
-        <p class="subtitle has-text-centered">임시 비밀번호를 확인하세요.</p>
-        <div class="columns is-centered">
-            <div class="column is-one-third">
-                <div class="message is-warning">
-                    <div class="message-header">
-                        <p>경고</p>
-                    </div>
-                    <div class="message-body">
-                        <p>임시 비밀번호는 다시 조회할 수 없습니다.</p>
-                        <p>만약 임시 비밀번호를 잃어버렸다면, 다시 설정해야합니다.</p>
-                    </div>
-                </div>
+<div class="container-fluid px-4 mb-5">
+    <h1 class="mt-4">계정 등록 완료</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">계정 등록</li>
+            <li class="breadcrumb-item"><a href="/admin/user-add">이메일 입력</a></li>
+            <li class="breadcrumb-item active">계정 등록 완료</li>
+        </ol>
+    </nav>
 
-                <div class="content box">
-                    <p>이메일(아이디): {{ email }}</p>
-                    <p>임시 비밀번호 : {{ password }}</p>
-                </div>
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">임시 비밀번호를 확인하세요.</h4>
+        <p>임시 비밀번호는 다시 조회할 수 없습니다.</p>
+        <hr>
+        <p>만약 임시 비밀번호를 잃어버렸다면, 다시 설정해야합니다.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="email" class="form-label"><i class="fas fa-envelope me-1"></i> 이메일</label>
+                <input id="email" class="form-control" value="{{ email|e }}" readonly>
+            </div>
+            <div>
+                <label for="password" class="form-label"><i class="fas fa-key me-1"></i> 비밀번호</label>
+                <input id="password" class="form-control" value="{{ password|e }}" readonly>
             </div>
         </div>
     </div>

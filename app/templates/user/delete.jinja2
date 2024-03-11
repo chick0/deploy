@@ -1,29 +1,32 @@
 {% extends "layout.jinja2" %}
 {% block content %}
-<div class="section">
-    <div class="container">
-        <h1 class="title is-1 has-text-centered">계정 삭제</h1>
-        <div class="box">
-            <div class="content is-medium">
-                <b>다음의 요소들이 삭제됩니다.</b>
-                <ul>
-                    {% for item in delete_list %}
-                        <li>{{ item|safe }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <hr>
-            <form method="post">
-                <div class="columns">
-                    <div class="column">
-                        <a class="button is-link is-medium is-fullwidth" href="{{ url_for('user.dashboard') }}">취소</a>
-                    </div>
-                    <div class="column">
-                        <button class="button is-danger is-medium is-fullwidth">계정 삭제</button>
-                    </div>
-                </div>
-            </form>
+<div class="container-fluid px-4 mb-3">
+    <h1 class="mt-4">계정 삭제</h1>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/user/dashboard">대시보드</a></li>
+            <li class="breadcrumb-item active">계정 삭제</li>
+        </ol>
+    </nav>
+
+    <p><b>다음의 요소들이 삭제됩니다.</b></p>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <ul class="p-0 m-0 ps-3">
+                {% for item in delete_list %}
+                    <li>{{ item|safe }}</li>
+                {% endfor %}
+            </ul>
         </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <form method="post">
+            <a class="btn btn-primary" href="/user/dashboard"><i class="fa-solid fa-xmark me-1"></i> 취소</a>
+            <button class="btn btn-danger"><i class="fa-solid fa-trash me-1"></i> 계정 삭제</button>
+        </form>
     </div>
 </div>
 {% endblock %}

@@ -1,87 +1,92 @@
 {% extends "layout.jinja2" %}
 {% block content %}
-<div class="section">
-    <div class="container">
-        <h1 class="title is-1 has-text-centered">대시보드</h1>
-        <div class="buttons is-centered">
-            <a class="button is-link is-medium" href="{{ url_for('user.password_update') }}">비밀번호 변경</a>
-            <a class="button is-danger is-medium" href="{{ url_for('user.delete') }}">계정 삭제</a>
-        </div>
+<div class="container-fluid px-4 mb-3">
+    <h1 class="mt-4">대시보드</h1>
+    {% include "lib/flash.jinja2" %}
+</div>
 
-        <div class="box">
-            <div class="field">
-                <label class="label">이메일</label>
-                <div class="control has-icons-left">
-                    <input class="input" value="{{ user.email }}" readonly>
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-envelope"></i>
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <div class="box">
-            <div class="field">
-                <label class="label">가입 날짜</label>
-                <div class="control has-icons-left">
-                    <input class="input" value="{{ user.created_at }}" readonly>
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-calendar"></i>
-                    </span>
-                </div>
+<div class="container-fluid px-4">
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">계정 정보</h5>
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-envelope me-1"></i> 이메일</label>
+                <input class="form-control" value="{{ user.email|e }}" readonly>
             </div>
 
-            <div class="field">
-                <label class="label">마지막 로그인 날짜</label>
-                <div class="control has-icons-left">
-                    <input class="input" value="{{ user.last_login_at }}" readonly>
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-lock-open"></i>
-                    </span>
+            <div class="row row-cols-1 row-cols-md-4">
+                <div class="col mb-3">
+                    <label class="form-label"><i class="fas fa-calendar me-1"></i> 가입 날짜</label>
+                    <input class="form-control" value="{{ user.created_at }}" readonly>
+                </div>
+                <div class="col mb-3">
+                    <label class="form-label"><i class="fas fa-lock-open me-1"></i> 마지막 로그인 날짜</label>
+                    <input class="form-control" value="{{ user.last_login_at }}" readonly>
+                </div>
+                <div class="col">
+                    <label class="form-label"><i class="fas fa-lock me-1"></i> 마지막 비밀번호 변경 날짜</label>
+                    <input class="form-control" value="{{ user.password_updated_at }}" readonly>
                 </div>
             </div>
 
-            <div class="field">
-                <label class="label">비밀번호 변경 날짜</label>
-                <div class="control has-icons-left">
-                    <input class="input" value="{{ user.password_updated_at }}" readonly>
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-lock"></i>
-                    </span>
+            <div class="d-flex gap-2">
+                <a class="btn btn-primary" href="{{ url_for('user.password_update') }}"><i class="fa-solid fa-key me-1"></i> 비밀번호 변경</a>
+                <a class="btn btn-danger" href="{{ url_for('user.delete') }}"><i class="fa-solid fa-trash me-1"></i> 계정 삭제</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">사용중인 버전 용량</h5>
+                    <p class="lead mb-0">{{ using_size|size2str }}</p>
                 </div>
             </div>
         </div>
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">프로젝트 사용률</h5>
+                    <p class="lead">{{ p_count_per }}%</p>
 
-        <div class="box">
-            <h2 class="title is-5 mb-3">사용중인 버전 용량</h2>
-            <div class="content">
-                <p>{{ using_size|size2str }}</p>
+                    {% if p_count_per <= 50 %}
+                        {% set color = "bg-success" %}
+                    {% elif p_count_per <= 70 %}
+                        {% set color = "bg-warning" %}
+                    {% else %}
+                        {% set color = "bg-danger" %}
+                    {% endif %}
+
+                    <div class="progress" role="progressbar">
+                        <div class="progress-bar {{ color }}" style="width: {{ p_count_per }}%"></div>
+                    </div>
+                </div>
             </div>
         </div>
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">버전 사용률</h5>
+                    <p class="lead">{{ d_count_per }}%</p>
 
-        <div class="box">
-            <h2 class="title is-5 mb-3">프로젝트 사용률</h2>
-            {% if p_count_per <= 50 %}
-                {% set color = "info" %}
-            {% elif p_count_per <= 70 %}
-                {% set color = "warning" %}
-            {% else %}
-                {% set color = "danger" %}
-            {% endif %}
-            <progress class="progress is-{{ color }}" value="{{ p_count_per }}" max="100">{{ p_count_per }}%</progress>
-            <hr>
-            <h2 class="title is-5 mb-3">버전 사용률</h2>
-            {% if d_count_per <= 50 %}
-                {% set color = "info" %}
-            {% elif d_count_per <= 70 %}
-                {% set color = "warning" %}
-            {% else %}
-                {% set color = "danger" %}
-            {% endif %}
-            <progress class="progress is-{{ color }}" value="{{ d_count_per }}" max="100">{{ d_count_per }}%</progress>
-            <hr>
-            <div class="buttons">
-                <a class="button is-danger is-medium" href="{{ url_for('user.clean_up') }}">미사용 버전 삭제</a>
+                    {% if d_count_per <= 50 %}
+                        {% set color = "bg-success" %}
+                    {% elif d_count_per <= 70 %}
+                        {% set color = "bg-warning" %}
+                    {% else %}
+                        {% set color = "bg-danger" %}
+                    {% endif %}
+
+                    <div class="progress mb-3" role="progressbar">
+                        <div class="progress-bar {{ color }}" style="width: {{ d_count_per }}%"></div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-danger" href="{{ url_for('user.clean_up') }}">미사용 버전 삭제</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

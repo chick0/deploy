@@ -9,6 +9,3 @@ DEPLOY_MAX = 100
 
 TOKEN_MAX = 10
 "프로젝트당 토큰 개수 제한"
-
-VERSION = "v2.0.0-dev"
-"버전 코드"

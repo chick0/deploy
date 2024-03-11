@@ -132,6 +132,7 @@ def password_update_post():
     logger.info(f"User id {user.id} change temp password from {get_from()}")
 
     session['user.id'] = user.id
+    session['user.email'] = user.email
     session['user.password'] = user.password
 
     del session['tmp+user.id']
