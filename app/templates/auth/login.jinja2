@@ -1,52 +1,22 @@
 {% extends "layout.jinja2" %}
 {% block content %}
-<div class="section">
-    <div class="container">
-        <h1 class="title is-1 has-text-centered">로그인</h1>
-        <div class="columns is-centered">
-            <div class="column is-one-third">
-                {% for message in get_flashed_messages(category_filter=["login"]) %}
-                    <div class="message is-danger">
-                        <div class="message-header">
-                            <p>로그인 실패</p>
-                        </div>
-                        <div class="message-body">
-                            {{ message }}
-                        </div>
-                    </div>
-                {% endfor %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">로그인</h1>
+    <p class="lead"></p>
 
-                <form class="box" method="post">
-                    <div class="field">
-                        <label class="label">이메일</label>
-                        <div class="control has-icons-left">
-                            <input class="input" type="email" placeholder="이메일" name="email" required>
-                            <span class="icon is-small is-left">
-                                <i class="fas fa-envelope"></i>
-                            </span>
-                        </div>
-                    </div>
+    {% include "lib/flash.jinja2"%}
 
-                    <div class="field">
-                        <label class="label">비밀번호</label>
-                        <div class="control has-icons-left">
-                            <input class="input" type="password" placeholder="비밀번호" name="password" required>
-                            <span class="icon is-small is-left">
-                                <i class="fas fa-lock"></i>
-                            </span>
-                        </div>
-                    </div>
-
-                    <br>
-
-                    <div class="field has-text-right">
-                        <div class="control">
-                            <button class="button is-primary is-medium" type="submit">로그인</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+    <form method="post">
+        <div class="mb-3">
+            <label for="email" class="form-label"><i class="fa-solid fa-envelope me-1"></i> 이메일</label>
+            <input type="email" class="form-control" id="email" name="email">
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="password" class="form-label"><i class="fa-solid fa-key me-1"></i> 비밀번호</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg"><i class="fa-solid fa-right-to-bracket me-1"></i> 로그인</button>
+    </form>
 </div>
 {% endblock %}

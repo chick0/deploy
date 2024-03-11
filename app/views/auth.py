@@ -76,10 +76,11 @@ def login_post():
     db.session.commit()
 
     session['user.id'] = user.id
+    session['user.email'] = user.email
     session['user.password'] = user.password
     logger.info(f"User id {user.id} and email {user.email} is logined from {get_from()}")
 
-    return redirect(url_for("project.get_list"))
+    return redirect(url_for("projects.show"))
 
 
 @bp.get("/password-update")
@@ -136,4 +137,4 @@ def password_update_post():
     del session['tmp+user.id']
     del session['tmp+user.email']
 
-    return redirect(url_for("project.get_list"))
+    return redirect(url_for("projects.show"))

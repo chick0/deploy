@@ -1,0 +1,63 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+<div class="container-fluid px-4 mb-5">
+    <h1 class="mt-4">{{ project.name|e }}</h1>
+    <p class="lead">{{ project.email|e }}</p>
+
+    {% include "lib/flash.jinja2" %}
+</div>
+
+<div class="container-fluid px-4 mb-5">
+    <h2>배포 버전</h2>
+    <p class="lead"></p>
+</div>
+
+<div class="container-fluid px-4">
+    <h2>배포 토큰</h2>
+    <p class="lead">{{ token_list|length }}개 <small>/10개</small></p>
+
+    <div class="d-flex gap-2 mb-3">
+        <button class="btn btn-primary as-create" data-name="{{ project.name|e }}"><i class="fa-solid fa-plus me-1"></i> 토큰 생성</button>
+    </div>
+
+    <div class="row row-cols-xl-4 row-cols-md-2 row-cols-1">
+        {% for token in token_list %}
+            <div class="col">
+                <div class="card mb-4">
+                    <div class="card-body py-1 px-2">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div class="fw-bold">생성 날짜</div>
+                                {{ token.created_at }}
+                            </li>
+                            <li class="list-group-item">
+                                <div class="fw-bold">만료 날짜</div>
+                                {% if token.expired_at is none %}
+                                    <b class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> 경고</b> 만료 날짜가 없습니다.
+                                {% else %}
+                                    {{ token.expired_at }}
+                                {% endif %}
+                            </li>
+                            <li class="list-group-item">
+                                <div class="fw-bold">마지막 사용 날짜</div>
+                                {% if token.last_used_at is none %}
+                                    해당 토큰은 사용 기록이 없습니다.
+                                {% else %}
+                                    {{ token.last_used_at }}
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-danger as-delete" data-id="{{ token.id }}"><i class="fa-solid fa-trash me-1"></i> 삭제하기</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="/static/projects/token.js"></script>
+{% endblock %}

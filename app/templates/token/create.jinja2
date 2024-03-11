@@ -1,73 +1,94 @@
-{% extends "layout.jinja2" %}
-{% block content %}
-<div class="section">
-    <div class="container">
-        <h1 class="title is-1 has-text-centered">배포 토큰 생성</h1>
-        <div class="columns is-centered">
-            <div class="column is-one-third">
-                {% for message in get_flashed_messages(category_filter=["token-create"]) %}
-                    <div class="message is-danger">
-                        <div class="message-header">
-                            <p>토큰 생성 실패</p>
-                        </div>
-                        <div class="message-body">
-                            {{ message }}
-                        </div>
-                    </div>
-                {% endfor %}
+<!DOCTYPE html>
+<html lang="ko" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta name="author" content="chick_0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        {# meta tag #}
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="robots" content="noindex">
+        <title>배포 토큰 생성 UI</title>
+        {# css #}
+        <link rel="stylesheet" as="style" href="/static/css/style.min.css">
+        <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable-dynamic-subset.css">
+    </head>
+    <body class="mx-2">
+        <div id="step1" class="step">
+            <h1>배포 토큰 생성</h1>
 
-                <form class="box" method="post">
-                    <div class="field">
-                        <label class="label">프로젝트</label>
-                        <div class="control has-icons-left">
-                            <div class="select">
-                                <select name="project_id" required>
-                                    {% if project_id is none %}
-                                        <option selected>프로젝트를 선택해주세요.</option>
-                                    {% endif %}
-                                    {% for project in project_list %}
-                                        {% if project_id == project.id %}
-                                            {% set selected = "selected" %}
-                                        {% endif %}
-                                        <option value="{{ project.id }}" {{ selected }}>{{ project.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <span class="icon is-left">
-                                <i class="fas fa-file"></i>
-                            </span>
-                        </div>
+            <div>
+                <div class="mb-3">
+                    <label class="form-label" for="name">대상 프로젝트</label>
+                    <input class="form-control" id="name" name="name" value="{{ name|e }}" readonly>
+                </div>
+            
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="expired_switch" name="expired_switch">
+                        <label class="form-check-label" for="expired_switch">배포 토큰 만료 날짜를 설정합니다.</label>
                     </div>
+                </div>
 
-                    <div class="field">
-                        <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox">
-                                배포 토큰 만료날짜 설정하기
-                            </label>
-                        </div>
+                <div class="d-none" id="exp-display">
+                    <div class="mb-3">
+                        <label class="form-label" for="expired_date">만료 날짜</label>
+                        <input class="form-control" type="date" id="expired_date" name="expired_date">
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="expired_time">만료 시간</label>
+                        <input class="form-control" type="time" id="expired_time" name="expired_time">
+                    </div>
+                </div>
 
-                    <div class="field is-hidden" id="expired_field">
-                        <label class="label">만료날짜</label>
-                        <div class="control has-icons-left">
-                            <input class="input" type="date" placeholder="토큰 만료날짜" id="expired_at">
-                            <span class="icon is-small is-left">
-                                <i class="fas fa-calendar"></i>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="field has-text-right">
-                        <div class="control">
-                            <button class="button is-link is-medium" type="submit">다음</button>
-                        </div>
-                    </div>
-                </form>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary w-50 as-next"><i class="fa-solid fa-arrow-right me-1"></i> 다음</button>
+                    <button class="btn btn-danger w-50 as-close"><i class="fa-solid fa-xmark me-1"></i> 닫기</button>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<script src="{{ url_for('static', filename='field-toggle.js') }}"></script>
-{% endblock %}
+        <div id="step2" class="step d-none">
+            <h1>배포 토큰 생성</h1>
+            <p class="lead">배포 토큰을 생성하고 있습니다. 잠시만 기다려주세요...</p>
+
+            <div class="position-absolute top-50 start-50 translate-middle">
+                <div class="spinner-border"></div>
+            </div>
+        </div>
+
+        <div id="step3" class="step d-none">
+            <h1>배포 토큰 생성 실패</h1>
+            <p class="lead"></p>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-danger w-100 as-close"><i class="fa-solid fa-xmark me-1"></i> 닫기</button>
+            </div>
+        </div>
+
+        <div id="step4" class="step d-none">
+            <h1>배포 토큰</h1>
+            <p class="lead"><b class="text-danger">주의!</b> 이 창을 닫으면 배포 토큰을 다시 확인 할 수 없습니다. 반드시 복사 후 닫아주세요.</p>
+
+            <div class="mb-3">
+                <label class="form-label" for="name">대상 프로젝트</label>
+                <input class="form-control" id="name" name="name" value="{{ name|e }}" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="token">배포 토큰</label>
+                <input class="form-control" id="token" name="token" readonly>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-danger w-100 as-close"><i class="fa-solid fa-xmark me-1"></i> 닫기</button>
+            </div>
+        </div>
+
+        <script crossorigin src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script crossorigin src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"></script>
+        <script src="/static/token/create.js"></script>
+        <script>
+            const name = "{{ name|e }}"
+        </script>
+    </body>
+</html>
