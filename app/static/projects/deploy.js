@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             p.className = "mb-0"
 
                             const b = document.createElement("b")
-                            b.style.minWidth = "75px"
+                            b.style.minWidth = "100px"
                             b.style.display = "inline-block"
 
                             if (member.is_dir) {
