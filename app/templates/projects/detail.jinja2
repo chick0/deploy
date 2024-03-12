@@ -9,12 +9,57 @@
 
 <div class="container-fluid px-4 mb-5">
     <h2>배포 버전</h2>
-    <p class="lead"></p>
+    <p class="lead">{{ version_count }}개 <small>/{{ DEPLOY_MAX }}개</small></p>
+
+
+    <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4">
+        {% for deploy in deploy_list %}
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-header" title="배포 날짜">
+                        <i class="fa-solid fa-calendar-days me-1"></i> {{ deploy.created_at|e }}
+                    </div>
+                    <div class="card-body" id="card-body-{{ deploy.id }}">
+                        <h5 class="card-title">
+                            {% if deploy.id == project.last_deploy %}
+                                <span class="badge text-bg-primary">사용중</span>
+                            {% endif %}
+
+                            {% if deploy.is_success == true %}
+                                <span class="badge text-bg-success">성공</span>
+                            {% elif deploy.is_success == false %}
+                                <span class="badge text-bg-danger">실패</span>
+                            {% else %}
+                                <span class="badge text-bg-warning">배포중</span>
+                            {% endif %}
+                        </h5>
+
+                        {% if deploy.message == none %}
+                            <p class="lead">배포 메시지가 없습니다.</p>
+                        {% else %}
+                            <p class="lead">{{ deploy.message|e }}</p>
+                        {% endif %}
+
+                        <hr>
+                        <i class="fa-solid fa-file me-1"></i> {{ get_size(project.owner, deploy.id)|size2str }}
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-dark btn-sm js-is-tree" data-deploy="{{ deploy.id }}">파일 정보</button>
+                            <a class="btn btn-dark btn-sm" href="/api/deploy/{{ deploy.id }}/download">다운로드</a>
+                            <button class="btn btn-primary btn-sm js-is-apply" data-deploy="{{ deploy.id }}">버전 적용</button>
+                            <button class="btn btn-danger btn-sm js-is-delete" data-deploy="{{ deploy.id }}">버전 삭제</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 </div>
 
 <div class="container-fluid px-4">
     <h2>배포 토큰</h2>
-    <p class="lead">{{ token_list|length }}개 <small>/10개</small></p>
+    <p class="lead">{{ token_list|length }}개 <small>/{{ TOKEN_MAX }}개</small></p>
 
     <div class="d-flex gap-2 mb-3">
         <button class="btn btn-primary as-create" data-name="{{ project.name|e }}"><i class="fa-solid fa-plus me-1"></i> 토큰 생성</button>
@@ -60,4 +105,5 @@
 
 {% block script %}
 <script src="/static/projects/token.js"></script>
+<script src="/static/projects/deploy.js"></script>
 {% endblock %}

@@ -1,4 +1,7 @@
 def size2str(size: int) -> str:
+    if size is None:
+        return "파일 삭제됨"
+
     def round2str(a, b) -> str:
         return str(round(a, b))
 

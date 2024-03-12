@@ -1,3 +1,4 @@
+from os import stat
 from typing import Optional
 from typing import NamedTuple
 
@@ -11,6 +12,7 @@ from .models import User
 from .models import Project
 from .models import Deploy
 from .models import Token
+from deploy.path import upload_path_with_deploy_id
 from deploy.remove import remove_user_path_with_user_id
 from deploy.remove import remove_upload_path_with_deploy_id
 from deploy.remove import remove_unzip_path_with_deploy_id
@@ -103,3 +105,10 @@ def delete_user_from_system(user: User):
 
     db.session.delete(user)
     db.session.commit()
+
+
+def get_size(user_id: int, deploy_id: int) -> Optional[int]:
+    try:
+        return stat(upload_path_with_deploy_id(user_id, deploy_id)).st_size
+    except FileNotFoundError:
+        return None

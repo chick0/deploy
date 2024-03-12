@@ -1,5 +1,3 @@
-from os import stat
-from typing import Optional
 from logging import getLogger
 
 from flask import Blueprint
@@ -8,66 +6,16 @@ from .. import db
 from ..models import User
 from ..models import Project
 from ..models import Token
-from ..models import Deploy
 from ..user import login_required
 from ..utils import get_from
 from ..utils import response
 from deploy import routes
-from deploy.path import upload_path_with_deploy_id
 from deploy.utils import auth_required
 
 bp = Blueprint("api", __name__, url_prefix="/api")
 bp.register_blueprint(routes.bp)
 
 logger = getLogger()
-
-
-def get_size(user_id: int, deploy_id: int) -> Optional[int]:
-    try:
-        return stat(upload_path_with_deploy_id(user_id, deploy_id)).st_size
-    except FileNotFoundError:
-        return None
-
-
-@bp.get("/project/<int:project_id>")
-@login_required
-def project_detail(project_id: int, user: User):
-    if user.id == 1:
-        project = Project.query.filter(
-            Project.id == project_id
-        ).first()
-    else:
-        project = Project.query.filter(
-            Project.id == project_id,
-            Project.owner == user.id
-        ).first()
-
-    if project is None:
-        return response(
-            status=False,
-            message="등록된 프로젝트가 아닙니다."
-        )
-
-    deploy_list: list[Deploy] = Deploy.query.filter(
-        Deploy.project == project.id
-    ).all()
-
-    return response(
-        payload={
-            "deploy_list": [
-                {
-                    "id": x.id,
-                    "owner": x.owner,
-                    "created_at": x.created_at.timestamp(),
-                    "is_success": x.is_success,
-                    "message": x.message,
-                    "size": get_size(x.owner, x.id),
-                    "using": project.last_deploy == x.id
-                }
-                for x in deploy_list
-            ]
-        }
-    )
 
 
 @bp.delete("/token/<int:token_id>")

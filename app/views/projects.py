@@ -18,10 +18,13 @@ from ..models import Project
 from ..models import Token
 from ..models import Deploy
 from ..const import PAGE_PER_OBJECT
+from ..const import DEPLOY_MAX
+from ..const import TOKEN_MAX
 from ..user import login_required
 from ..max import check_project_max
 from ..utils import get_from
 from ..utils import get_page
+from ..utils import get_size
 
 bp = Blueprint("projects", __name__, url_prefix="/projects")
 logger = getLogger()
@@ -153,11 +156,27 @@ def detail(user: User, project_id: int):
         if project.owner != user.id:
             abort(404)
 
+    version_count = Deploy.query.filter(
+        Deploy.project == project_id
+    ).count()
+
+    deploy_list = Deploy.query.filter(
+        Deploy.project == project_id
+    ).all()
+
+    token_list = Token.query.filter(
+        Token.project == project_id
+    ).all()
+
     return render_template(
         "projects/detail.jinja2",
         project=project,
+        version_count=version_count,
 
-        token_list=Token.query.filter(
-            Token.project == project_id
-        ).all()
+        get_size=get_size,
+        deploy_list=deploy_list,
+        token_list=token_list,
+
+        DEPLOY_MAX=DEPLOY_MAX,
+        TOKEN_MAX=TOKEN_MAX,
     )

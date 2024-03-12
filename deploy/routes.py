@@ -3,6 +3,8 @@ from logging import getLogger
 
 from flask import Blueprint
 from flask import request
+from flask import flash
+from flask import redirect
 from flask import send_file
 
 from app import db
@@ -256,10 +258,8 @@ def download(user: User, deploy_id: int):
     ).first()
 
     if deploy is None:
-        return response(
-            status=False,
-            message="등록된 버전이 아닙니다."
-        )
+        flash("등록된 버전이 아닙니다.")
+        return redirect("/user/dashboard")
 
     if user.id != 1 and Token.query.filter(   # 관리자 / 토큰 주인 확인
         Token.owner == user.id,
@@ -268,10 +268,8 @@ def download(user: User, deploy_id: int):
         Project.id == deploy.project,
         Project.owner == user.id
     ).count() == 0:
-        return response(
-            status=False,
-            message="권한이 없습니다."
-        )
+        flash("권한이 없습니다.")
+        return redirect("/user/dashboard")
 
     path = upload_path_with_deploy_id(deploy.owner, deploy_id)
 
@@ -295,7 +293,5 @@ def download(user: User, deploy_id: int):
             download_name=f"{name}-{deploy.id}.zip"
         )
     except FileNotFoundError:
-        return response(
-            status=False,
-            message="업로드된 파일이 삭제되어 조회할 수 없습니다."
-        )
+        flash("업로드된 파일이 삭제되어 조회할 수 없습니다.")
+        return redirect("/user/dashboard")
