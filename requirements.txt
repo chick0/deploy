@@ -48,5 +48,5 @@ typing-extensions==4.10.0
     #   sqlalchemy
 waitress==3.0.0
     # via -r requirements.in
-werkzeug==3.0.3
+werkzeug==3.0.6
     # via flask
