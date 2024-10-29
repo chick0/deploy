@@ -46,7 +46,7 @@ typing-extensions==4.10.0
     # via
     #   alembic
     #   sqlalchemy
-waitress==3.0.0
+waitress==3.0.1
     # via -r requirements.in
 werkzeug==3.0.6
     # via flask
